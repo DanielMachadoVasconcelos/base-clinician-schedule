@@ -16,13 +16,26 @@ public class Schedule {
 
     public Schedule(String clinicianId, Set<TimeSlot> available, Set<TimeSlot> reserved) {
         this.clinicianId = Preconditions.checkNotNull(clinicianId, "ClinicianId is mandatory");
-        this.available = Sets.newHashSet(CollectionUtils.emptyIfNull(available));
         this.reserved = Sets.newHashSet(CollectionUtils.emptyIfNull(reserved));
+        this.available = Sets.newHashSet(CollectionUtils.removeAll(CollectionUtils.emptyIfNull(available), reserved));
+    }
+
+    public String getClinicianId() {
+        return clinicianId;
+    }
+
+    public Set<TimeSlot> getAvailable() {
+        return available;
+    }
+
+    public Set<TimeSlot> getReserved() {
+        return reserved;
     }
 
     public Schedule merge(Schedule other) {
         Preconditions.checkState(clinicianId.equals(other.clinicianId), "ClinicianId is not the same");
         this.available = Sets.newHashSet(Iterables.concat(other.available, this.available));
+        this.reserved = Sets.newHashSet(Iterables.concat(other.reserved, this.reserved));
         return this;
     }
 
@@ -31,6 +44,7 @@ public class Schedule {
         return MoreObjects.toStringHelper(this)
                 .add("clinicianId", clinicianId)
                 .add("available", available)
+                .add("reserved", reserved)
                 .toString();
     }
 }
