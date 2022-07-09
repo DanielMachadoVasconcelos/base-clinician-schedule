@@ -41,10 +41,14 @@ class ShiftTest {
     @DisplayName("Should return the bookable availabilities when removing all booked meetings")
     void shouldReturnTheAvailableTimeSlotsWhenRemovingAllBookedMeetings() {
 
+        //given: an 8 hours shift
         Shift shifts = Shift.of(time("08:00"), time("09:00"));
+
+        //and: the shift has two booked meetings
         TimeSlot firstMeeting = new Slot(time("08:00"), time("08:15"));
         TimeSlot secondMeeting = new Slot(time("08:45"), time("09:00"));
 
+        //when: getting the bookable availability
         Shift availableSlots = shifts.subtractAll(firstMeeting, secondMeeting);
 
         //then: there should be available bookable slots
