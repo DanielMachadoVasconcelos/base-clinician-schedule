@@ -12,7 +12,9 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
-class TimeSlotOperationsTest {
+import static helpers.TimeSlotHelper.time;
+
+class TimeSlotSubtractionOperationTest {
 
   @Test
   @DisplayName("Should return the same time slots when intersecting non overlapping time slots")
@@ -60,14 +62,5 @@ class TimeSlotOperationsTest {
     Assertions.assertNotNull(IterableUtils.find(result, expectedFirstTimeSlot::equals));
     Assertions.assertNotNull(IterableUtils.find(result, expectedSecondTimeSlot::equals));
 
-  }
-
-  public ZonedDateTime time(String time) {
-    return time(LocalDate.now(), time);
-  }
-
-  public ZonedDateTime time(LocalDate date, String time) {
-    LocalTime now = LocalTime.parse(time);
-    return ZonedDateTime.of(date, now, ZoneOffset.UTC);
   }
 }

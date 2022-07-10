@@ -1,6 +1,7 @@
 package br.com.ead.home.models.api;
 
 import br.com.ead.home.models.OverlapPossibility;
+import com.google.common.collect.Sets;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -119,14 +120,6 @@ public interface TimeSlot extends Comparable<TimeSlot>, Cloneable, Serializable 
    */
   default Set<TimeSlot> unionAll(Set<TimeSlot> others) {
     Set<TimeSlot> results = new TreeSet<>();
-    results.add(this);
-    for (TimeSlot other : others) {
-      for (TimeSlot overlap : other.overlapsWith(results)) {
-        other = other.sum(overlap);
-        results.remove(overlap);
-      }
-      results.add(other);
-    }
     return results;
   }
 
@@ -145,16 +138,26 @@ public interface TimeSlot extends Comparable<TimeSlot>, Cloneable, Serializable 
                  .collect(Collectors.toCollection(TreeSet::new));
   }
 
-  default TimeSlot sum(TimeSlot other) {
-    switch (this.checkOverlap(other)) {
+  default Set<TimeSlot> sum(TimeSlot other) {
+    OverlapPossibility possibility = this.checkOverlap(other);
+    switch (possibility) {
+      case EQUALS:
+      case CONTAINS:
+        return Sets.newTreeSet(Set.of(this));
       case IS_CONTAINED:
-        return other;
+        return Sets.newTreeSet(Set.of(other));
       case STARTS_BEFORE_ENDS_WITHIN:
-        return this.of(this.start(), other.end());
+        return Sets.newTreeSet(Set.of(this.of(this.start(), other.end())));
       case STARTS_WITHIN_ENDS_AFTER:
-        return this.of(other.start(), this.end());
+        return Sets.newTreeSet(Set.of(this.of(other.start(), this.end())));
       default:
-        return this;
+        if (this.start().equals(other.end())) {
+          return Sets.newTreeSet(Set.of(this.of(other.start(), this.end())));
+        }
+        if (this.end().equals(other.start())) {
+          return Sets.newTreeSet(Set.of(this.of(this.start(), other.end())));
+        }
+        return Sets.newTreeSet(Set.of(this, other));
     }
   }
 

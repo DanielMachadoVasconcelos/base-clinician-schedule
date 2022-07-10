@@ -7,11 +7,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static helpers.TimeSlotHelper.time;
 
 class TimeSlotTest {
 
@@ -96,14 +93,5 @@ class TimeSlotTest {
         TimeSlot first = new Slot(time("10:00"), time("12:00"));
         TimeSlot second = new Slot(time("09:00"), time("11:00"));
         Assertions.assertEquals(OverlapPossibility.STARTS_WITHIN_ENDS_AFTER, first.checkOverlap(second));
-    }
-
-    public ZonedDateTime time(String time) {
-        return time(LocalDate.now(), time);
-    }
-
-    public ZonedDateTime time(LocalDate date, String time) {
-        LocalTime now = LocalTime.parse(time);
-        return ZonedDateTime.of(date, now, ZoneOffset.UTC);
     }
 }

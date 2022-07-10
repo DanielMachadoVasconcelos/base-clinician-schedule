@@ -11,6 +11,8 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
+import static helpers.TimeSlotHelper.time;
+
 class ShiftTest {
 
     @Test
@@ -62,9 +64,28 @@ class ShiftTest {
         );
     }
 
-    public ZonedDateTime time(String time) {
-        LocalTime now = LocalTime.parse(time);
-        LocalDate today = LocalDate.now();
-        return ZonedDateTime.of(today, now, ZoneOffset.UTC);
+    @Test
+    @DisplayName("Should return the bookable availabilities when duplicated booking meetings")
+    void shouldIgnoreDuplicatedBookingWhenSubtractingTheAvailability() {
+
+        //given: an 8 hours shift
+        Shift shifts = Shift.of(time("08:00"), time("12:00"));
+
+        //and: the shift has two booked meetings at the same time
+        TimeSlot firstMeeting = new Slot(time("09:00"), time("10:00"));
+        TimeSlot secondMeeting = new Slot(time("09:00"), time("10:00"));
+
+        //when: getting the bookable availability
+        Shift availableSlots = shifts.subtractAll(firstMeeting, secondMeeting);
+
+        //then: there should be available bookable slots
+        TimeSlot expectedBookableAvailability = new Slot(time("08:00"), time("09:00"));
+        Assertions.assertAll(
+                () -> Assertions.assertNotNull(availableSlots, "Must not return null"),
+                () -> Assertions.assertNotNull(availableSlots.timeSlots(), "Must not return time slot list as null"),
+                () -> Assertions.assertFalse(availableSlots.timeSlots().isEmpty(), "Must return some bookable availability"),
+                () -> Assertions.assertEquals(2, availableSlots.timeSlots().size(), "Must return one bookable availability"),
+                () -> Assertions.assertNotNull(IterableUtils.find(availableSlots.timeSlots(), expectedBookableAvailability::equals), "Must have the bookable availability from 09:00 to 17:00")
+        );
     }
 }
