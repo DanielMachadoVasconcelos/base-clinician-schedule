@@ -25,6 +25,10 @@ public interface TimeSlot extends Comparable<TimeSlot>, Cloneable, Serializable 
         .compare(this, other);
   }
 
+  /**
+   * The total Duration of this time slot
+   * @return Duration of this time slot
+   */
   default Duration length() {
     return Duration.between(start(), end());
   }
@@ -103,6 +107,27 @@ public interface TimeSlot extends Comparable<TimeSlot>, Cloneable, Serializable 
   }
 
   /**
+   * Verify if this time slot overlaps the other
+   *
+   * @param other to verify the collision
+   * @return true if both time slots overlap
+   */
+  default boolean overlaps(TimeSlot other) {
+    return !this.checkOverlap(other).equals(OverlapPossibility.NO_OVERLAP);
+  }
+
+  /**
+   * Verify if this time slot overlaps with the list of the given othes time slots
+   * @param others List of time slots to check against to
+   * @return The list of time slots that overlap
+   */
+  default Set<TimeSlot> overlapsWith(Set<TimeSlot> others) {
+    return others.stream()
+            .filter(other -> other.overlaps(this))
+            .collect(Collectors.toCollection(TreeSet::new));
+  }
+
+  /**
    *    Sum all the timeslots, by performing the A union B operation
    *
    *    <p>A + B:
@@ -118,47 +143,44 @@ public interface TimeSlot extends Comparable<TimeSlot>, Cloneable, Serializable 
    * @param others list of others time slits to combine
    * @return Set of all time slots combined
    */
-  default Set<TimeSlot> unionAll(Set<TimeSlot> others) {
-    Set<TimeSlot> results = new TreeSet<>();
-    return results;
-  }
-
-  /**
-   * Verify if this time slot overlaps the other
-   * @param other to verify the collision
-   * @return true if both time slots overlap
-   */
-  default boolean overlaps(TimeSlot other) {
-    return !this.checkOverlap(other).equals(OverlapPossibility.NO_OVERLAP);
-  }
-
-  default Set<TimeSlot> overlapsWith(Set<TimeSlot> others) {
-    return others.stream()
-                 .filter(other -> other.overlaps(this))
-                 .collect(Collectors.toCollection(TreeSet::new));
+  default Set<TimeSlot> sumAll(Set<TimeSlot> others) {
+      return others.stream()
+              .map(this::sum)
+              .flatMap(Set::stream)
+              .collect(Collectors.toCollection(TreeSet::new));
   }
 
   default Set<TimeSlot> sum(TimeSlot other) {
+    Set<TimeSlot> result = new TreeSet<>();
     OverlapPossibility possibility = this.checkOverlap(other);
     switch (possibility) {
       case EQUALS:
       case CONTAINS:
-        return Sets.newTreeSet(Set.of(this));
+        result.add(this);
+        break;
       case IS_CONTAINED:
-        return Sets.newTreeSet(Set.of(other));
+        result.add(other);
+        break;
       case STARTS_BEFORE_ENDS_WITHIN:
-        return Sets.newTreeSet(Set.of(this.of(this.start(), other.end())));
+        result.add(this.of(this.start(), other.end()));
+        break;
       case STARTS_WITHIN_ENDS_AFTER:
-        return Sets.newTreeSet(Set.of(this.of(other.start(), this.end())));
+        result.add(this.of(other.start(), this.end()));
+        break;
       default:
         if (this.start().equals(other.end())) {
-          return Sets.newTreeSet(Set.of(this.of(other.start(), this.end())));
+          result.add(this.of(other.start(), this.end()));
+          break;
         }
         if (this.end().equals(other.start())) {
-          return Sets.newTreeSet(Set.of(this.of(this.start(), other.end())));
+          result.add(this.of(this.start(), other.end()));
+          break;
         }
-        return Sets.newTreeSet(Set.of(this, other));
+        result.add(this);
+        result.add(other);
+        break;
     }
+    return result;
   }
 
   /**
@@ -210,7 +232,6 @@ public interface TimeSlot extends Comparable<TimeSlot>, Cloneable, Serializable 
     }
     return results;
   }
-
 
   default OverlapPossibility checkOverlap(TimeSlot other) {
     if (this.equals(other)) {

@@ -1,16 +1,12 @@
 package br.com.ead.home.models;
 
 import br.com.ead.home.models.api.TimeSlot;
-import com.google.common.base.Preconditions;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.SetUtils;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public record Shift(Set<TimeSlot> timeSlots) {
@@ -33,7 +29,7 @@ public record Shift(Set<TimeSlot> timeSlots) {
   }
 
   public Shift add(TimeSlot timeSlot) {
-    return new Shift(timeSlot.unionAll(this.timeSlots));
+    return new Shift(timeSlot.sumAll(this.timeSlots));
   }
 
   public Shift addAll(Set<TimeSlot> others) {
