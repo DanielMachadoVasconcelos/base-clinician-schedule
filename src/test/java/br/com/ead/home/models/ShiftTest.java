@@ -81,11 +81,11 @@ class ShiftTest {
         //then: there should be available bookable slots
         TimeSlot expectedBookableAvailability = new Slot(time("08:15"), time("08:45"));
         Assertions.assertAll(
-                () -> Assertions.assertNotNull(availableSlots, "Must not return null"),
-                () -> Assertions.assertNotNull(availableSlots.timeSlots(), "Must not return time slot list as null"),
-                () -> Assertions.assertFalse(availableSlots.timeSlots().isEmpty(), "Must return some bookable availability"),
-                () -> Assertions.assertEquals(1, availableSlots.timeSlots().size(), "Must return one bookable availability"),
-                () -> Assertions.assertNotNull(IterableUtils.find(availableSlots.timeSlots(), expectedBookableAvailability::equals), "Must have the bookable availability from 09:00 to 17:00")
+            () -> Assertions.assertNotNull(availableSlots, "Must not return null"),
+            () -> Assertions.assertNotNull(availableSlots.timeSlots(), "Must not return time slot list as null"),
+            () -> Assertions.assertFalse(availableSlots.timeSlots().isEmpty(), "Must return some bookable availability"),
+            () -> Assertions.assertEquals(1, availableSlots.timeSlots().size(), "Must return one bookable availability"),
+            () -> Assertions.assertNotNull(IterableUtils.find(availableSlots.timeSlots(), expectedBookableAvailability::equals), "Must have the bookable availability from 09:00 to 17:00")
         );
     }
 
@@ -106,11 +106,11 @@ class ShiftTest {
         //then: there should be available bookable slots
         TimeSlot expectedBookableAvailability = new Slot(time("08:00"), time("09:00"));
         Assertions.assertAll(
-                () -> Assertions.assertNotNull(availableSlots, "Must not return null"),
-                () -> Assertions.assertNotNull(availableSlots.timeSlots(), "Must not return time slot list as null"),
-                () -> Assertions.assertFalse(availableSlots.timeSlots().isEmpty(), "Must return some bookable availability"),
-                () -> Assertions.assertEquals(2, availableSlots.timeSlots().size(), "Must return one bookable availability"),
-                () -> Assertions.assertNotNull(IterableUtils.find(availableSlots.timeSlots(), expectedBookableAvailability::equals), "Must have the bookable availability from 09:00 to 17:00")
+            () -> Assertions.assertNotNull(availableSlots, "Must not return null"),
+            () -> Assertions.assertNotNull(availableSlots.timeSlots(), "Must not return time slot list as null"),
+            () -> Assertions.assertFalse(availableSlots.timeSlots().isEmpty(), "Must return some bookable availability"),
+            () -> Assertions.assertEquals(2, availableSlots.timeSlots().size(), "Must return one bookable availability"),
+            () -> Assertions.assertNotNull(IterableUtils.find(availableSlots.timeSlots(), expectedBookableAvailability::equals), "Must have the bookable availability from 09:00 to 17:00")
         );
     }
 }
