@@ -1,6 +1,7 @@
 package br.com.ead.home.models;
 
 import br.com.ead.home.models.api.TimeSlot;
+import com.google.common.collect.Sets;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.SetUtils;
 
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 public record Shift(Set<TimeSlot> timeSlots) {
 
   public Shift(Set<TimeSlot> timeSlots) {
-    this.timeSlots = new TreeSet<>(CollectionUtils.emptyIfNull(timeSlots));
+    this.timeSlots = Sets.newTreeSet(CollectionUtils.emptyIfNull(timeSlots));
   }
 
   public static Shift of(Set<TimeSlot> timeSlots) {
@@ -42,11 +43,9 @@ public record Shift(Set<TimeSlot> timeSlots) {
             .map(timeSlot -> timeSlot.subtract(other))
             .flatMap(Set::stream)
             .collect(Collectors.toCollection(TreeSet::new)));
-
   }
 
   public Shift subtractAll(TimeSlot ...other) {
-
     if(other == null || other.length == 0) {
       return this;
     }

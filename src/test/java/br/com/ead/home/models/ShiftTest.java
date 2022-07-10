@@ -6,14 +6,39 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.util.Set;
 
 import static helpers.TimeSlotHelper.time;
 
 class ShiftTest {
+
+    @Test
+    @DisplayName("Should not fail when creating a shift without time slots")
+    void shouldNotFailWhenCreatingShiftsWithoutTimeSlots() {
+        Assertions.assertAll(
+            () -> Assertions.assertNotNull(new Shift(null).timeSlots(), "Must accept null value"),
+            () -> Assertions.assertNotNull(new Shift(Set.of()).timeSlots(), "Must accept empty values")
+        );
+    }
+
+    @Test
+    @DisplayName("Should remove all availability when shift is fully booked")
+    void shouldHasNoAvailabilityWhenShiftIsFullyBooked() {
+
+        //given: an 8 hours shift
+        Shift shifts = Shift.of(time("08:00"), time("17:00"));
+
+        //and: the shift has only one meeting booked of one hour
+        TimeSlot meeting = new Slot(time("08:00"), time("17:00"));
+
+        //when: removing the booked time slots
+        Shift availableSlots = shifts.subtract(meeting);
+        Assertions.assertAll(
+                () -> Assertions.assertNotNull(availableSlots, "Must not return null"),
+                () -> Assertions.assertNotNull(availableSlots.timeSlots(), "Must not return time slot list as null"),
+                () -> Assertions.assertTrue(availableSlots.timeSlots().isEmpty(), "Must not return any bookable availability")
+        );
+    }
 
     @Test
     @DisplayName("Should find all available bookable slots when the shift is not fully booked")

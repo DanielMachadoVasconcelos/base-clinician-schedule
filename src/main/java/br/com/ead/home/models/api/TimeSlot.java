@@ -237,6 +237,7 @@ public interface TimeSlot extends Comparable<TimeSlot>, Cloneable, Serializable 
             }
             case STARTS_BEFORE_ENDS_WITHIN -> results.add(this.of(this.start(), other.start()));
             case STARTS_WITHIN_ENDS_AFTER -> results.add(this.of(other.end(), this.end()));
+            case EQUALS -> results.addAll(Set.of());
             default -> results.add(this);
         }
         return results;
