@@ -25,8 +25,8 @@ public record Shift(Set<TimeSlot> timeSlots) {
   public static Shift of(ZonedDateTime start, ZonedDateTime end) {
     Preconditions.checkNotNull(start, "Start date time is mandatory.");
     Preconditions.checkNotNull(end, "End date time is mandatory.");
-    TimeSlot timeSlot = new Slot(start, end);
-    return new Shift(Set.of(timeSlot));
+    Preconditions.checkState(start.isBefore(end) , "Start time must be before End time.");
+    return new Shift(Set.of(new Slot(start, end)));
   }
 
   public Set<TimeSlot> getTimeSlots() {

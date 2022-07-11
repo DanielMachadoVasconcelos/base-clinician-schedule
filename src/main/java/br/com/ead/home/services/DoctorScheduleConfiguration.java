@@ -31,13 +31,17 @@ public record DoctorScheduleConfiguration(Duration meetingLength,
         ZonedDateTime from = ZonedDateTime.of(today, now, doctorTimeZone);
         ZonedDateTime nextMeetingOnlyAfter = from.plus(nextMeetingOnlyIn);
 
-        ZonedDateTime seed = timeSlot.start();
-        Predicate<ZonedDateTime> hasNext = nextSlot -> nextSlot.isBefore(timeSlot.end());
-        UnaryOperator<ZonedDateTime> next = nextSlot -> nextSlot.plus(meetingLength);
-        Function<ZonedDateTime, TimeSlot> mapToTimeSlot = date -> new Slot(date, date.plus(meetingLength));
+//        ZonedDateTime seed = timeSlot.start();
+//        UnaryOperator<ZonedDateTime> next = nextSlot -> nextSlot.plus(meetingLength);
+//        Function<ZonedDateTime, TimeSlot> mapToTimeSlot = date -> new Slot(date, date.plus(meetingLength));
+
+        TimeSlot seed = new Slot(timeSlot.start(), timeSlot.start().plus(meetingLength));
+        Predicate<TimeSlot> hasNext = nextSlot -> nextSlot.end().isBefore(timeSlot.end());
+        UnaryOperator<TimeSlot> next = nextSlot -> nextSlot.of(
+                nextSlot.start().plus(bufferBetweenMeetings).plus(meetingLength),
+                nextSlot.end().plus(bufferBetweenMeetings).plus(meetingLength));
 
         return Stream.iterate(seed, hasNext, next)
-                .map(mapToTimeSlot)
                 .filter(slot -> nextMeetingOnlyAfter.isBefore(slot.start()))
                 .limit(onlyMaximumOfFreeSlots)
                 .collect(Collectors.toCollection(TreeSet::new));
