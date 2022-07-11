@@ -4,7 +4,6 @@ import br.com.ead.home.models.Shift;
 import br.com.ead.home.models.Slot;
 import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
-import br.com.ead.home.services.ScheduleService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -30,8 +29,7 @@ public class MockScheduleRepository implements ScheduleRepository {
 
        return Stream.iterate(seed, hasNext, next)
                .map(date -> (TimeSlot) new Slot(date, date.plusHours(8)))
-               .map(Set::of)
-               .map(Shift::new)
+               .map(timeSlot -> new Shift(clinicianId, timeSlot))
                .collect(Collectors.toSet());
     }
 

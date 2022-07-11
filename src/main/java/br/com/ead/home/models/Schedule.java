@@ -11,10 +11,9 @@ public record Schedule(ClinicianId clinicianId, Shift shift, Set<TimeSlot> booki
 
     public Set<TimeSlot> getBookableAvailability(TimeSlotSplitter splitter) {
         return shift.subtractAll(bookings)
-                .getTimeSlots()
-                .stream()
-                .map(splitter::split)
-                .flatMap(Set::stream)
-                .collect(Collectors.toSet());
+                    .stream()
+                    .map(splitter::split)
+                    .flatMap(Set::stream)
+                    .collect(Collectors.toSet());
     }
 }

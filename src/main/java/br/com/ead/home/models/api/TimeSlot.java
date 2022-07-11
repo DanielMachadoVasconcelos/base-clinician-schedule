@@ -24,8 +24,8 @@ public interface TimeSlot extends Comparable<TimeSlot>, Cloneable, Serializable 
 
     @Override
     default int compareTo(TimeSlot other) {
-        return Comparator.comparing(TimeSlot::start).reversed()
-                .thenComparing(TimeSlot::end).reversed()
+        return Comparator.comparing(TimeSlot::start)
+                .thenComparing(TimeSlot::end)
                 .compare(this, other);
     }
 

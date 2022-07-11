@@ -4,6 +4,7 @@ import br.com.ead.home.models.Slot;
 import br.com.ead.home.models.api.TimeSlot;
 import com.google.common.base.Preconditions;
 
+import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -19,54 +20,129 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public record DoctorScheduleConfiguration(Duration meetingLength,
-                                          Duration bufferBetweenMeetings,
-                                          Duration nextMeetingOnlyIn,
-                                          Long onlyMaximumOfFreeSlots,
-                                          ZoneId doctorTimeZone) implements TimeSlotSplitter {
+public final class DoctorScheduleConfiguration implements TimeSlotSplitter {
 
-    public DoctorScheduleConfiguration(Duration meetingLength,
+    private final ZonedDateTime now;
+    private final Duration meetingLength;
+    private final Duration bufferBetweenMeetings;
+    private final Duration nextMeetingOnlyIn;
+    private final Long onlyMaximumOfFreeSlots;
+    private final ZoneId doctorTimeZone;
+
+    public DoctorScheduleConfiguration(Clock clock,
+                                       Duration meetingLength,
                                        Duration bufferBetweenMeetings,
                                        Duration nextMeetingOnlyIn,
                                        Long onlyMaximumOfFreeSlots,
                                        ZoneId doctorTimeZone) {
 
-        Preconditions.checkNotNull(meetingLength, "Minimum meeting length is mandatory");
-        Preconditions.checkState(!meetingLength.isNegative(), "Meeting length must be positive");
-        Preconditions.checkState(onlyMaximumOfFreeSlots > 0, "Number of free slot must be grater then zero");
+        this.meetingLength = Optional.ofNullable(meetingLength).orElse(Duration.ofMinutes(30));
+        Preconditions.checkState(!this.meetingLength.isNegative(), "Meeting length must be positive");
 
         this.doctorTimeZone = Optional.ofNullable(doctorTimeZone).orElse(ZoneOffset.UTC);
-        this.meetingLength = meetingLength;
-        this.bufferBetweenMeetings = bufferBetweenMeetings;
-        this.nextMeetingOnlyIn = nextMeetingOnlyIn;
+        this.bufferBetweenMeetings = Optional.ofNullable(bufferBetweenMeetings).orElse(Duration.ZERO);
+        this.nextMeetingOnlyIn = Optional.ofNullable(nextMeetingOnlyIn).orElse(Duration.ZERO);
         this.onlyMaximumOfFreeSlots = onlyMaximumOfFreeSlots;
+
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now().truncatedTo(ChronoUnit.MINUTES);
+        ZonedDateTime from = ZonedDateTime.of(date, time, this.doctorTimeZone);
+        this.now =  Optional.ofNullable(clock).map(ZonedDateTime::now).orElse(from);
     }
 
     @Override
     public Set<TimeSlot> split(TimeSlot timeSlot) {
 
-        if(timeSlot == null){
+        if (timeSlot == null) {
             return Set.of();
         }
 
-        if(Duration.between(timeSlot.start(), timeSlot.end()).compareTo(meetingLength) < 0) {
+        if (Duration.between(timeSlot.start(), timeSlot.end()).compareTo(meetingLength) < 0) {
             return Set.of();
         }
 
-        LocalDate today = LocalDate.now();
-        LocalTime now = LocalTime.now().truncatedTo(ChronoUnit.MINUTES);
-        ZonedDateTime from = ZonedDateTime.of(today, now, doctorTimeZone);
-        ZonedDateTime nextMeetingOnlyAfter = from.plus(nextMeetingOnlyIn);
-
-        TimeSlot seed = new Slot(timeSlot.start(), timeSlot.start().plus(meetingLength));
+        TimeSlot seed = new Slot(timeSlot.start().plus(nextMeetingOnlyIn), timeSlot.start().plus(meetingLength).plus(nextMeetingOnlyIn));
         Predicate<TimeSlot> hasNext = nextSlot -> nextSlot.end().isBefore(timeSlot.end());
         UnaryOperator<TimeSlot> next = nextSlot -> nextSlot.of(
                 nextSlot.start().plus(bufferBetweenMeetings).plus(meetingLength),
                 nextSlot.end().plus(bufferBetweenMeetings).plus(meetingLength));
 
-        return Stream.iterate(seed, hasNext, next)
-                .filter(slot -> nextMeetingOnlyAfter.isBefore(slot.start()))
-                .limit(onlyMaximumOfFreeSlots)
+       return Optional.ofNullable(onlyMaximumOfFreeSlots)
+                .filter(it -> it > 0)
+                .map(limitTo -> Stream.iterate(seed, hasNext, next).limit(limitTo))
+                .orElseGet(() -> Stream.iterate(seed, hasNext, next))
                 .collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    public ZonedDateTime getNow() {
+        return now;
+    }
+
+    public Duration getMeetingLength() {
+        return meetingLength;
+    }
+
+    public Duration getBufferBetweenMeetings() {
+        return bufferBetweenMeetings;
+    }
+
+    public Duration getNextMeetingOnlyIn() {
+        return nextMeetingOnlyIn;
+    }
+
+    public Long getOnlyMaximumOfFreeSlots() {
+        return onlyMaximumOfFreeSlots;
+    }
+
+    public ZoneId getDoctorTimeZone() {
+        return doctorTimeZone;
+    }
+
+    public static class Builder {
+        private Clock clock;
+        private Duration meetingLength;
+        private Duration bufferBetweenMeetings;
+        private Duration nextMeetingOnlyIn;
+        private Long onlyMaximumOfFreeSlots;
+        private ZoneId doctorTimeZone;
+
+        public Builder setClock(Clock clock) {
+            this.clock = clock;
+            return this;
+        }
+
+        public Builder setMeetingLength(Duration meetingLength) {
+            this.meetingLength = meetingLength;
+            return this;
+        }
+
+        public Builder setBufferBetweenMeetings(Duration bufferBetweenMeetings) {
+            this.bufferBetweenMeetings = bufferBetweenMeetings;
+            return this;
+        }
+
+        public Builder setNextMeetingOnlyIn(Duration nextMeetingOnlyIn) {
+            this.nextMeetingOnlyIn = nextMeetingOnlyIn;
+            return this;
+        }
+
+        public Builder setOnlyMaximumOfFreeSlots(Long onlyMaximumOfFreeSlots) {
+            this.onlyMaximumOfFreeSlots = onlyMaximumOfFreeSlots;
+            return this;
+        }
+
+        public Builder setDoctorTimeZone(ZoneId doctorTimeZone) {
+            this.doctorTimeZone = doctorTimeZone;
+            return this;
+        }
+
+        public DoctorScheduleConfiguration build() {
+            return new DoctorScheduleConfiguration(clock,
+                    meetingLength,
+                    bufferBetweenMeetings,
+                    nextMeetingOnlyIn,
+                    onlyMaximumOfFreeSlots,
+                    doctorTimeZone);
+        }
     }
 }

@@ -1,67 +1,31 @@
 package br.com.ead.home.models;
 
 import br.com.ead.home.models.api.TimeSlot;
+import br.com.ead.home.models.primitives.ClinicianId;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.SetUtils;
 
-import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public record Shift(Set<TimeSlot> timeSlots) {
+public record Shift(ClinicianId clinicianId, TimeSlot timeSlot) {
 
-  public Shift(Set<TimeSlot> timeSlots) {
-    this.timeSlots = Sets.newTreeSet(CollectionUtils.emptyIfNull(timeSlots));
-  }
-
-  public static Shift of(Set<TimeSlot> timeSlots) {
-    return new Shift(Sets.newTreeSet(CollectionUtils.emptyIfNull(timeSlots)));
-  }
-
-  public static Shift of(ZonedDateTime start, ZonedDateTime end) {
-    Preconditions.checkNotNull(start, "Start date time is mandatory.");
-    Preconditions.checkNotNull(end, "End date time is mandatory.");
-    Preconditions.checkState(start.isBefore(end) , "Start time must be before End time.");
-    return new Shift(Set.of(new Slot(start, end)));
-  }
-
-  public Set<TimeSlot> getTimeSlots() {
-    return Sets.newTreeSet(timeSlots);
-  }
-
-  public Shift add(TimeSlot timeSlot) {
-    return new Shift(timeSlot.sumAll(this.timeSlots));
-  }
-
-  public Shift addAll(Set<TimeSlot> others) {
-    return new Shift(SetUtils.union(this.timeSlots, others));
-  }
-
-  public Shift subtract(TimeSlot other) {
-    return new Shift(this.timeSlots
-            .stream()
-            .map(timeSlot -> timeSlot.subtract(other))
-            .flatMap(Set::stream)
-            .collect(Collectors.toCollection(TreeSet::new)));
-  }
-
-  public Shift subtractAll(Set<TimeSlot> others) {
-    if(others == null || others.isEmpty()) {
-      return this;
+    public Shift(ClinicianId clinicianId, TimeSlot timeSlot) {
+        this.clinicianId = Preconditions.checkNotNull(clinicianId, "Clinician is Mandatory");
+        this.timeSlot = Preconditions.checkNotNull(timeSlot, "Time slot is mandatory");
     }
 
-    Shift current = new Shift(this.timeSlots);
-    for (TimeSlot slot: others){
-      current = current.subtract(slot);
+    public Set<TimeSlot> subtractAll(Set<TimeSlot> bookings) {
+        return CollectionUtils.emptyIfNull(bookings)
+                .stream()
+                .sorted(TimeSlot::compareTo)
+                .reduce(Set.of(timeSlot),
+                        (acc, next) -> acc.stream().flatMap(item -> item.subtract(next).stream()).collect(Collectors.toSet()),
+                        (acc, next) -> Sets.newTreeSet(CollectionUtils.union(acc, next)));
     }
-    return current;
-  }
 
-  public Shift subtractAll(TimeSlot ...other) {
-    return subtractAll(Sets.newTreeSet(Arrays.asList(other)));
-  }
+    public Set<TimeSlot> subtract(TimeSlot meeting) {
+        return this.timeSlot.subtract(meeting);
+    }
 }
