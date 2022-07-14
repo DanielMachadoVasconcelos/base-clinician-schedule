@@ -20,7 +20,7 @@ class ShiftTest {
     void shouldNotFailWhenCreatingShiftsWithoutTimeSlots() {
         Assertions.assertAll(
                 () -> Assertions.assertThrowsExactly(NullPointerException.class, () -> new Shift(null, null)),
-                () -> Assertions.assertThrowsExactly(NullPointerException.class, () -> new Shift(new ClinicianId(UUID.randomUUID()), null)));
+                () -> Assertions.assertThrowsExactly(NullPointerException.class, () -> new Shift(ClinicianId.from(UUID.randomUUID()), null)));
     }
 
     @Test
@@ -28,7 +28,7 @@ class ShiftTest {
     void shouldHasNoAvailabilityWhenShiftIsFullyBooked() {
 
         //given: an 8 hours shift
-        Shift shifts = new Shift(new ClinicianId(UUID.randomUUID()), new Slot(time("08:00"), time("17:00")));
+        Shift shifts = new Shift(ClinicianId.from(UUID.randomUUID()), new Slot(time("08:00"), time("17:00")));
 
         //and: the shift has only one meeting booked of one hour
         TimeSlot meeting = new Slot(time("08:00"), time("17:00"));
@@ -46,7 +46,7 @@ class ShiftTest {
     void shouldFindAllAvailableBookableSlotsWhenShiftIsNotFull() {
 
         //given: an 8 hours shift
-        Shift shifts = new Shift(new ClinicianId(UUID.randomUUID()), new Slot(time("08:00"), time("17:00")));
+        Shift shifts = new Shift(ClinicianId.from(UUID.randomUUID()), new Slot(time("08:00"), time("17:00")));
 
         //and: the shift has only one meeting booked of one hour
         TimeSlot meeting = new Slot(time("08:00"), time("09:00"));
@@ -69,7 +69,7 @@ class ShiftTest {
     void shouldReturnTheAvailableTimeSlotsWhenRemovingAllBookedMeetings() {
 
         //given: an 1 hours shift
-        Shift shifts = new Shift(new ClinicianId(UUID.randomUUID()), new Slot(time("08:00"), time("09:00")));
+        Shift shifts = new Shift(ClinicianId.from(UUID.randomUUID()), new Slot(time("08:00"), time("09:00")));
 
         //and: the shift has two booked meetings
         TimeSlot firstMeeting = new Slot(time("08:00"), time("08:15"));
@@ -93,7 +93,7 @@ class ShiftTest {
     void shouldReturnTheAvailableTimeSlotsWhenRemovingAllNonConnectedBookedMeetings() {
 
         //given: an 10 hours shift
-        Shift shifts = new Shift(new ClinicianId(UUID.randomUUID()), new Slot(time("08:00"), time("18:00")));
+        Shift shifts = new Shift(ClinicianId.from(UUID.randomUUID()), new Slot(time("08:00"), time("18:00")));
 
         //and: the shift has two booked meetings
         TimeSlot firstMeeting = new Slot(time("09:00"), time("10:00"));
