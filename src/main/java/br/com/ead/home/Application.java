@@ -10,11 +10,14 @@ import br.com.ead.home.services.ScheduleService;
 import br.com.ead.home.services.TimeSlotSlicer;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.flowables.GroupedFlowable;
+import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import java.time.*;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Log4j2
 public class Application {
 
     private static final ScheduleService scheduleService = new ScheduleService(new MockScheduleRepository());
@@ -33,6 +36,7 @@ public class Application {
                 Flowable.fromIterable(scheduleService.findAllAppointmentByClinicianId(new ClinicianId("Thomas")))
                         .groupBy(Appointment::clinicianId, meeting -> new Schedule(meeting.clinicianId(), Set.of(), Set.of(meeting)));
 
+        ZonedDateTime now = ZonedDateTime.now();
         Flowable.concat(meetingsPerClinician, shiftsPerClinician)
                 .flatMapSingle(groupByClinician -> groupByClinician.collect(Collectors.reducing(Schedule::mergeByClinicianAndShift)))
                 .flatMap(Flowable::fromOptional)
@@ -40,8 +44,8 @@ public class Application {
                 .flatMapSingle(groupByClinician -> groupByClinician.collect(Collectors.reducing(Schedule::mergeByClinicianAndShift)))
                 .flatMap(Flowable::fromOptional)
                 .flatMapIterable(schedule -> schedule.getBookableAvailability(slicer))
-                .subscribe(item -> System.out.println(String.format("Item: %s", item)),
-                           error -> System.err.println(String.format("Error: %s", error)),
-                           () -> System.out.println("Completed!"));
+                .subscribe(item -> log.info(String.format("Item: %s", item)),
+                           error -> log.error(String.format("Error: %s", error)),
+                           () -> log.info("Completed! Took: {}", DurationFormatUtils.formatDurationHMS(Duration.between(now, ZonedDateTime.now()).toMillis())));
     }
 }

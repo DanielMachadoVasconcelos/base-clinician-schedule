@@ -30,7 +30,7 @@ public class MockScheduleRepository implements ScheduleRepository {
         LocalTime now = LocalTime.of(8, 0, 0);
         ZonedDateTime seed = ZonedDateTime.of(today, now, ZoneOffset.UTC);
 
-        Predicate<ZonedDateTime> hasNext = item -> seed.plusDays(7).isAfter(item);
+        Predicate<ZonedDateTime> hasNext = item -> seed.plusDays(180).isAfter(item);
         UnaryOperator<ZonedDateTime> next = item -> item.plusDays(1);
 
        return Stream.iterate(seed, hasNext, next)
@@ -45,11 +45,11 @@ public class MockScheduleRepository implements ScheduleRepository {
         LocalTime now = LocalTime.of(8, 0, 0);
         ZonedDateTime seed = ZonedDateTime.of(today, now, ZoneOffset.UTC);
 
-        Predicate<ZonedDateTime> hasNext = item -> seed.plusDays(7).isAfter(item);
-        UnaryOperator<ZonedDateTime> next = item -> item.plusHours(1);
+        Predicate<ZonedDateTime> hasNext = item -> seed.plusDays(180).isAfter(item);
+        UnaryOperator<ZonedDateTime> next = item -> item.plusMinutes(15);
 
         return Stream.iterate(seed, hasNext, next)
-                .map(date -> (TimeSlot) new Slot(date, date.plusHours(1)))
+                .map(date -> (TimeSlot) new Slot(date, date.plusMinutes(15)))
                 .filter(any -> random.nextBoolean() && random.nextBoolean() && random.nextBoolean())
                 .map(timeSlot -> new Appointment(clinicianId, generatePatientId(), timeSlot))
                 .collect(Collectors.toSet());

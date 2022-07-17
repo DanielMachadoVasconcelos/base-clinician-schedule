@@ -36,30 +36,4 @@ public record Slot(ZonedDateTime start, ZonedDateTime end) implements TimeSlot {
             .append("end", end)
             .toString();
   }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-
-    if (!(o instanceof Slot)) {
-      return false;
-    }
-
-    Slot slot = (Slot) o;
-
-    return new EqualsBuilder()
-            .append(start, slot.start)
-            .append(end, slot.end)
-            .isEquals();
-  }
-
-  @Override
-  public int hashCode() {
-    return new HashCodeBuilder(17, 37)
-            .append(start)
-            .append(end)
-            .toHashCode();
-  }
 }
