@@ -17,6 +17,10 @@ public record ScheduleService(ScheduleRepository repository) {
         return repository.findAllShift();
     }
 
+    public Set<Appointment> findAllAppointment() {
+        return repository.findAllAppointment();
+    }
+
     public Set<Appointment> findAllAppointmentByClinicianId(ClinicianId clinicianId) {
         return repository.findAllAppointmentByClinicianId(clinicianId);
     }

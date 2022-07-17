@@ -6,7 +6,6 @@ import br.com.ead.home.models.Slot;
 import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
 import br.com.ead.home.models.primitives.PatientId;
-import org.apache.commons.collections4.SetUtils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -15,6 +14,7 @@ import java.time.ZonedDateTime;
 
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -57,8 +57,33 @@ public class MockScheduleRepository implements ScheduleRepository {
 
     @Override
     public Set<Shift> findAllShift() {
-        return SetUtils.union(findAllByClinicianId(new ClinicianId("Thomas")),
-                              findAllByClinicianId(new ClinicianId("Sara")));
+        TreeSet<Shift> shifts = new TreeSet<>();
+        shifts.addAll(findAllByClinicianId(new ClinicianId("Thomas")));
+        shifts.addAll(findAllByClinicianId(new ClinicianId("Sara")));
+        shifts.addAll(findAllByClinicianId(new ClinicianId("Robert")));
+        shifts.addAll(findAllByClinicianId(new ClinicianId("Anton")));
+        shifts.addAll(findAllByClinicianId(new ClinicianId("Pedro")));
+        shifts.addAll(findAllByClinicianId(new ClinicianId("Daniel")));
+        shifts.addAll(findAllByClinicianId(new ClinicianId("Karl")));
+        shifts.addAll(findAllByClinicianId(new ClinicianId("Harry")));
+        shifts.addAll(findAllByClinicianId(new ClinicianId("Nikita")));
+        shifts.addAll(findAllByClinicianId(new ClinicianId("Li Niko")));
+        return shifts;
+    }
+
+    public Set<Appointment> findAllAppointment() {
+        TreeSet<Appointment> appointments = new TreeSet<>();
+        appointments.addAll(findAllAppointmentByClinicianId(new ClinicianId("Thomas")));
+        appointments.addAll(findAllAppointmentByClinicianId(new ClinicianId("Sara")));
+        appointments.addAll(findAllAppointmentByClinicianId(new ClinicianId("Robert")));
+        appointments.addAll(findAllAppointmentByClinicianId(new ClinicianId("Anton")));
+        appointments.addAll(findAllAppointmentByClinicianId(new ClinicianId("Pedro")));
+        appointments.addAll(findAllAppointmentByClinicianId(new ClinicianId("Daniel")));
+        appointments.addAll(findAllAppointmentByClinicianId(new ClinicianId("Karl")));
+        appointments.addAll(findAllAppointmentByClinicianId(new ClinicianId("Harry")));
+        appointments.addAll(findAllAppointmentByClinicianId(new ClinicianId("Nikita")));
+        appointments.addAll(findAllAppointmentByClinicianId(new ClinicianId("Li Niko")));
+        return appointments;
     }
 
 

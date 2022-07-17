@@ -12,5 +12,7 @@ public interface ScheduleRepository {
 
     Set<Appointment> findAllAppointmentByClinicianId(ClinicianId clinicianId);
 
+    Set<Appointment> findAllAppointment();
+
     Set<Shift> findAllShift();
 }

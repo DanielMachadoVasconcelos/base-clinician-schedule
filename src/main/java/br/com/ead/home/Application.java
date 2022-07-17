@@ -33,7 +33,7 @@ public class Application {
                         .groupBy(Shift::clinicianId, shift -> new Schedule(shift.clinicianId(), Set.of(shift), Set.of()));
 
         Flowable<GroupedFlowable<ClinicianId, Schedule>> meetingsPerClinician =
-                Flowable.fromIterable(scheduleService.findAllAppointmentByClinicianId(new ClinicianId("Thomas")))
+                Flowable.fromIterable(scheduleService.findAllAppointment())
                         .groupBy(Appointment::clinicianId, meeting -> new Schedule(meeting.clinicianId(), Set.of(), Set.of(meeting)));
 
         ZonedDateTime now = ZonedDateTime.now();
