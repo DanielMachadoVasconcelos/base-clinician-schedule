@@ -20,7 +20,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public final class DoctorScheduleConfiguration implements TimeSlotSplitter {
+public final class ClinicianScheduleConfiguration implements TimeSlotSlicer {
 
     private final ZonedDateTime now;
     private final Duration meetingLength;
@@ -29,12 +29,12 @@ public final class DoctorScheduleConfiguration implements TimeSlotSplitter {
     private final Long onlyMaximumOfFreeSlots;
     private final ZoneId doctorTimeZone;
 
-    public DoctorScheduleConfiguration(Clock clock,
-                                       Duration meetingLength,
-                                       Duration bufferBetweenMeetings,
-                                       Duration nextMeetingOnlyIn,
-                                       Long onlyMaximumOfFreeSlots,
-                                       ZoneId doctorTimeZone) {
+    public ClinicianScheduleConfiguration(Clock clock,
+                                          Duration meetingLength,
+                                          Duration bufferBetweenMeetings,
+                                          Duration nextMeetingOnlyIn,
+                                          Long onlyMaximumOfFreeSlots,
+                                          ZoneId doctorTimeZone) {
 
         this.meetingLength = Optional.ofNullable(meetingLength).orElse(Duration.ofMinutes(30));
         Preconditions.checkState(!this.meetingLength.isNegative(), "Meeting length must be positive");
@@ -44,10 +44,15 @@ public final class DoctorScheduleConfiguration implements TimeSlotSplitter {
         this.nextMeetingOnlyIn = Optional.ofNullable(nextMeetingOnlyIn).orElse(Duration.ZERO);
         this.onlyMaximumOfFreeSlots = onlyMaximumOfFreeSlots;
 
+        this.now = Optional.ofNullable(clock)
+                            .map(ZonedDateTime::now)
+                            .orElseGet(() -> getCurrentDateTime(this.doctorTimeZone));
+    }
+
+    private static ZonedDateTime getCurrentDateTime(ZoneId zoneId) {
         LocalDate date = LocalDate.now();
         LocalTime time = LocalTime.now().truncatedTo(ChronoUnit.MINUTES);
-        ZonedDateTime from = ZonedDateTime.of(date, time, this.doctorTimeZone);
-        this.now =  Optional.ofNullable(clock).map(ZonedDateTime::now).orElse(from);
+        return ZonedDateTime.of(date, time, zoneId);
     }
 
     @Override
@@ -62,7 +67,7 @@ public final class DoctorScheduleConfiguration implements TimeSlotSplitter {
         }
 
         TimeSlot seed = new Slot(timeSlot.start().plus(nextMeetingOnlyIn), timeSlot.start().plus(meetingLength).plus(nextMeetingOnlyIn));
-        Predicate<TimeSlot> hasNext = nextSlot -> nextSlot.end().isBefore(timeSlot.end());
+        Predicate<TimeSlot> hasNext = nextSlot -> nextSlot.end().isBefore(timeSlot.end()) || nextSlot.end().equals(timeSlot.end());
         UnaryOperator<TimeSlot> next = nextSlot -> nextSlot.of(
                 nextSlot.start().plus(bufferBetweenMeetings).plus(meetingLength),
                 nextSlot.end().plus(bufferBetweenMeetings).plus(meetingLength));
@@ -72,30 +77,6 @@ public final class DoctorScheduleConfiguration implements TimeSlotSplitter {
                 .map(limitTo -> Stream.iterate(seed, hasNext, next).limit(limitTo))
                 .orElseGet(() -> Stream.iterate(seed, hasNext, next))
                 .collect(Collectors.toCollection(TreeSet::new));
-    }
-
-    public ZonedDateTime getNow() {
-        return now;
-    }
-
-    public Duration getMeetingLength() {
-        return meetingLength;
-    }
-
-    public Duration getBufferBetweenMeetings() {
-        return bufferBetweenMeetings;
-    }
-
-    public Duration getNextMeetingOnlyIn() {
-        return nextMeetingOnlyIn;
-    }
-
-    public Long getOnlyMaximumOfFreeSlots() {
-        return onlyMaximumOfFreeSlots;
-    }
-
-    public ZoneId getDoctorTimeZone() {
-        return doctorTimeZone;
     }
 
     public static class Builder {
@@ -136,8 +117,8 @@ public final class DoctorScheduleConfiguration implements TimeSlotSplitter {
             return this;
         }
 
-        public DoctorScheduleConfiguration build() {
-            return new DoctorScheduleConfiguration(clock,
+        public ClinicianScheduleConfiguration build() {
+            return new ClinicianScheduleConfiguration(clock,
                     meetingLength,
                     bufferBetweenMeetings,
                     nextMeetingOnlyIn,

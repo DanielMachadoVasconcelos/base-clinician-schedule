@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 
 public record Slot(ZonedDateTime start, ZonedDateTime end) implements TimeSlot {
@@ -15,6 +16,13 @@ public record Slot(ZonedDateTime start, ZonedDateTime end) implements TimeSlot {
     Preconditions.checkNotNull(start, "Start time is mandatory");
     Preconditions.checkNotNull(start, "End time is mandatory");
     Preconditions.checkState(start.isBefore(end) , "Start time must be before End time");
+  }
+
+  public static TimeSlot from(ZonedDateTime start, Duration duration) {
+    Preconditions.checkNotNull(start, "Start time is mandatory");
+    Preconditions.checkNotNull(duration, "Duration is mandatory");
+    Preconditions.checkState(!duration.isNegative(), "Duration must be positive");
+    return new Slot(start, start.plus(duration));
   }
 
   public Slot of(ZonedDateTime start, ZonedDateTime end) {
