@@ -15,13 +15,13 @@ import java.util.Set;
 
 import static helpers.TimeSlotHelper.time;
 
-class DoctorScheduleConfigurationTest {
+class ClinicianScheduleConfigurationTest {
 
     @Test
     @DisplayName("Should reject Doctor Schedule when meeting length is negative")
     void shouldNotAcceptDoctorShiftConfigurationWhenMeetingLengthNegative() {
         Assertions.assertThrowsExactly(IllegalStateException.class,
-                () ->  new DoctorScheduleConfiguration(
+                () ->  new ClinicianScheduleConfiguration(
                         null,
                         Duration.ofHours(-1),
                         Duration.ofMinutes(15),
@@ -39,7 +39,7 @@ class DoctorScheduleConfigurationTest {
         Slot shift = new Slot(time(tomorrow, "08:00"), time(tomorrow, "18:00"));
 
         // given: the doctor has a schedule configuration
-        DoctorScheduleConfiguration configuration = new DoctorScheduleConfiguration.Builder()
+        ClinicianScheduleConfiguration configuration = new ClinicianScheduleConfiguration.Builder()
                 .setBufferBetweenMeetings(Duration.ofMinutes(15))
                 .setMeetingLength(Duration.ofHours(1))
                 .setOnlyMaximumOfFreeSlots(6L)
@@ -70,7 +70,7 @@ class DoctorScheduleConfigurationTest {
         Duration expectedNextMeetingOnlyIn = Duration.ofHours(4);
 
         // given: the doctor has a schedule configuration
-        DoctorScheduleConfiguration configuration = new DoctorScheduleConfiguration.Builder()
+        ClinicianScheduleConfiguration configuration = new ClinicianScheduleConfiguration.Builder()
                 .setBufferBetweenMeetings(Duration.ofMinutes(15))
                 .setNextMeetingOnlyIn(expectedNextMeetingOnlyIn)
                 .setMeetingLength(Duration.ofHours(1))
@@ -85,7 +85,7 @@ class DoctorScheduleConfigurationTest {
         TimeSlot expectedFirstSlot = new Slot(time("12:00"), time("13:00"));
         Assertions.assertAll(
                 () -> Assertions.assertNotNull(expectedResult, "Must not return null"),
-                () -> Assertions.assertEquals(4, expectedResult.size(), "Must return at maximum 4 slots"),
+                () -> Assertions.assertEquals(5, expectedResult.size(), "Must return at maximum 5 slots"),
                 () -> Assertions.assertNotNull(IterableUtils.find(expectedResult, expectedFirstSlot::equals), "Must have the next time slot from 12:00 to 13:00")
         );
     }

@@ -2,7 +2,7 @@ package br.com.ead.home.models;
 
 import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
-import br.com.ead.home.services.TimeSlotSplitter;
+import br.com.ead.home.services.TimeSlotSlicer;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.SetUtils;
@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
 
 public record Schedule(ClinicianId clinicianId, Set<Shift> shift, Set<Appointment> bookings) {
 
-    public Set<TimeSlot> getBookableAvailability(TimeSlotSplitter splitter) {
+    public Set<TimeSlot> getBookableAvailability(TimeSlotSlicer slicer) {
         return shift.stream()
             .map(current -> current.subtractAll(Sets.newTreeSet(CollectionUtils.collect(bookings, Appointment::timeSlot))))
             .flatMap(Set::stream)
-            .map(splitter::split)
+            .map(slicer::split)
             .flatMap(Set::stream)
             .collect(Collectors.toCollection(TreeSet::new));
     }
