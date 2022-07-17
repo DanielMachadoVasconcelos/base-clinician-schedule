@@ -4,7 +4,6 @@ import br.com.ead.home.models.Appointment;
 import br.com.ead.home.models.Shift;
 import br.com.ead.home.models.primitives.ClinicianId;
 import br.com.ead.home.repositories.ScheduleRepository;
-import org.apache.commons.collections4.SetUtils;
 
 import java.util.Set;
 
@@ -14,9 +13,8 @@ public record ScheduleService(ScheduleRepository repository) {
         return repository.findAllByClinicianId(clinicianId);
     }
 
-    public Set<Shift> findAll() {
-        return SetUtils.union(findByClinicianId(new ClinicianId("Thomas")),
-                                findByClinicianId(new ClinicianId("Sara")));
+    public Set<Shift> findAllShift() {
+        return repository.findAllShift();
     }
 
     public Set<Appointment> findAllAppointmentByClinicianId(ClinicianId clinicianId) {

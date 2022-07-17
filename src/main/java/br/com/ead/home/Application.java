@@ -3,7 +3,6 @@ package br.com.ead.home;
 import br.com.ead.home.models.Appointment;
 import br.com.ead.home.models.Schedule;
 import br.com.ead.home.models.Shift;
-import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
 import br.com.ead.home.repositories.MockScheduleRepository;
 import br.com.ead.home.services.ClinicianScheduleConfiguration;
@@ -14,7 +13,6 @@ import io.reactivex.rxjava3.flowables.GroupedFlowable;
 
 import java.time.*;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class Application {
@@ -28,7 +26,7 @@ public class Application {
     public static void main(String[] args) {
 
         Flowable<GroupedFlowable<ClinicianId, Schedule>> shiftsPerClinician =
-                Flowable.fromIterable(scheduleService.findAll())
+                Flowable.fromIterable(scheduleService.findAllShift())
                         .groupBy(Shift::clinicianId, shift -> new Schedule(shift.clinicianId(), Set.of(shift), Set.of()));
 
         Flowable<GroupedFlowable<ClinicianId, Schedule>> meetingsPerClinician =

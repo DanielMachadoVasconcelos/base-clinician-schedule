@@ -6,6 +6,7 @@ import br.com.ead.home.models.Slot;
 import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
 import br.com.ead.home.models.primitives.PatientId;
+import org.apache.commons.collections4.SetUtils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -52,6 +53,12 @@ public class MockScheduleRepository implements ScheduleRepository {
                 .filter(any -> random.nextBoolean() && random.nextBoolean() && random.nextBoolean())
                 .map(timeSlot -> new Appointment(clinicianId, generatePatientId(), timeSlot))
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<Shift> findAllShift() {
+        return SetUtils.union(findAllByClinicianId(new ClinicianId("Thomas")),
+                              findAllByClinicianId(new ClinicianId("Sara")));
     }
 
 
