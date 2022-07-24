@@ -8,7 +8,7 @@ import java.util.Set;
 
 public interface ScheduleRepository {
 
-    Set<Shift> findAllByClinicianId(ClinicianId clinicianId);
+    Set<Shift> findAllShiftsByClinicianId(ClinicianId clinicianId);
 
     Set<Appointment> findAllAppointmentByClinicianId(ClinicianId clinicianId);
 

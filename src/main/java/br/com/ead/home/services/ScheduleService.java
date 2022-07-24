@@ -10,10 +10,10 @@ import java.util.Set;
 public record ScheduleService(ScheduleRepository repository) {
 
     public Set<Shift> findByClinicianId(ClinicianId clinicianId) {
-        return repository.findAllByClinicianId(clinicianId);
+        return repository.findAllShiftsByClinicianId(clinicianId);
     }
 
-    public Set<Shift> findAllShift() {
+    public Set<Shift> findAllShifts() {
         return repository.findAllShift();
     }
 

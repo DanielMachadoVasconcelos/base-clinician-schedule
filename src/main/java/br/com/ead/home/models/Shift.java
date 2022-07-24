@@ -4,11 +4,13 @@ import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Log4j2
 public record Shift(ClinicianId clinicianId, TimeSlot timeSlot) implements Comparable<Shift> {
 
     public Shift(ClinicianId clinicianId, TimeSlot timeSlot) {
@@ -34,6 +36,7 @@ public record Shift(ClinicianId clinicianId, TimeSlot timeSlot) implements Compa
     }
 
     public Set<TimeSlot> subtractAll(Set<TimeSlot> bookings) {
+        log.debug("Subtracting all bookings size={} from the shift", bookings.size());
         return CollectionUtils.emptyIfNull(bookings)
                 .stream()
                 .sorted(TimeSlot::compareTo)
