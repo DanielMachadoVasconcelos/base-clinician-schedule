@@ -1,5 +1,6 @@
 package br.com.ead.home.services;
 
+import br.com.ead.home.models.ClinicianSchedulePreferences;
 import br.com.ead.home.models.Slot;
 import br.com.ead.home.models.api.TimeSlot;
 import org.apache.commons.collections4.IterableUtils;
@@ -15,21 +16,7 @@ import java.util.Set;
 
 import static helpers.TimeSlotHelper.time;
 
-class ClinicianScheduleConfigurationTest {
-
-    @Test
-    @DisplayName("Should reject Doctor Schedule when meeting length is negative")
-    void shouldNotAcceptDoctorShiftConfigurationWhenMeetingLengthNegative() {
-        Assertions.assertThrowsExactly(IllegalStateException.class,
-                () ->  new ClinicianScheduleConfiguration(
-                        null,
-                        Duration.ofHours(-1),
-                        Duration.ofMinutes(15),
-                        Duration.ofHours(4),
-                        6L,
-                        ZoneOffset.UTC)
-        );
-    }
+class ClinicianSchedulePreferencesTest {
 
     @Test
     @DisplayName("Should find all availability when requesting with Doctor Schedule Configuration")
@@ -39,14 +26,14 @@ class ClinicianScheduleConfigurationTest {
         Slot shift = new Slot(time(tomorrow, "08:00"), time(tomorrow, "18:00"));
 
         // given: the doctor has a schedule configuration
-        ClinicianScheduleConfiguration configuration = new ClinicianScheduleConfiguration.Builder()
-                .setBufferBetweenMeetings(Duration.ofMinutes(15))
-                .setMeetingLength(Duration.ofHours(1))
-                .setOnlyMaximumOfFreeSlots(6L)
+        ClinicianSchedulePreferences configuration = ClinicianSchedulePreferences.builder()
+                .bufferBetweenMeetings(Duration.ofMinutes(15))
+                .meetingLength(Duration.ofHours(1))
+                .onlyMaximumOfFreeSlots(6L)
                 .build();
 
         // when: using the configuration to split the shift in time slots
-        Set<TimeSlot> expectedResult = configuration.split(shift);
+        Set<TimeSlot> expectedResult = configuration.slice(shift);
 
         // then: the expected result should be
         TimeSlot expectedFirstSlot = new Slot(time(tomorrow, "08:00"), time(tomorrow, "09:00"));
@@ -70,16 +57,15 @@ class ClinicianScheduleConfigurationTest {
         Duration expectedNextMeetingOnlyIn = Duration.ofHours(4);
 
         // given: the doctor has a schedule configuration
-        ClinicianScheduleConfiguration configuration = new ClinicianScheduleConfiguration.Builder()
-                .setBufferBetweenMeetings(Duration.ofMinutes(15))
-                .setNextMeetingOnlyIn(expectedNextMeetingOnlyIn)
-                .setMeetingLength(Duration.ofHours(1))
-                .setOnlyMaximumOfFreeSlots(6L)
-                .setClock(clock)
+        ClinicianSchedulePreferences configuration = ClinicianSchedulePreferences.builder()
+                .bufferBetweenMeetings(Duration.ofMinutes(15))
+                .nextMeetingOnlyIn(expectedNextMeetingOnlyIn)
+                .meetingLength(Duration.ofHours(1))
+                .onlyMaximumOfFreeSlots(6L)
                 .build();
 
         // when: using the configuration to split the shift in time slots
-        Set<TimeSlot> expectedResult = configuration.split(shift);
+        Set<TimeSlot> expectedResult = configuration.slice(shift);
 
         // then: the expected result should be
         TimeSlot expectedFirstSlot = new Slot(time("12:00"), time("13:00"));
