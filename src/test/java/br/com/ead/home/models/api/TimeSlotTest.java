@@ -1,6 +1,5 @@
 package br.com.ead.home.models.api;
 
-import br.com.ead.home.models.OverlapPossibility;
 import br.com.ead.home.models.Slot;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

@@ -25,10 +25,10 @@ public record Shift(ClinicianId clinicianId, TimeSlot timeSlot) implements Compa
     public Set<TimeSlot> addAll(Set<TimeSlot> bookings) {
         return CollectionUtils.emptyIfNull(bookings)
                 .stream()
-                .sorted(TimeSlot::compareTo)
+                .sorted()
                 .reduce(Set.of(timeSlot),
                         (acc, next) -> acc.stream().flatMap(item -> item.sum(next).stream()).collect(Collectors.toSet()),
-                        (acc, next) -> Sets.newTreeSet(CollectionUtils.union(acc, next)));
+                        (acc, next) -> Sets.newHashSet(CollectionUtils.union(acc, next)));
     }
 
     public Set<TimeSlot> subtract(TimeSlot meeting) {
@@ -39,10 +39,10 @@ public record Shift(ClinicianId clinicianId, TimeSlot timeSlot) implements Compa
         log.debug("Subtracting all bookings size={} from the shift", bookings.size());
         return CollectionUtils.emptyIfNull(bookings)
                 .stream()
-                .sorted(TimeSlot::compareTo)
+                .sorted()
                 .reduce(Set.of(timeSlot),
                         (acc, next) -> acc.stream().flatMap(item -> item.subtract(next).stream()).collect(Collectors.toSet()),
-                        (acc, next) -> Sets.newTreeSet(CollectionUtils.union(acc, next)));
+                        (acc, next) -> Sets.newHashSet(CollectionUtils.union(acc, next)));
     }
 
     @Override

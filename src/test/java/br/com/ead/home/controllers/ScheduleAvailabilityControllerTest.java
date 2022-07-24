@@ -9,8 +9,14 @@ import br.com.ead.home.repositories.MockAppointmentRepository;
 import br.com.ead.home.repositories.MockClinicianPreferencesRepository;
 import br.com.ead.home.repositories.MockShiftRepository;
 import br.com.ead.home.repositories.ShiftRepository;
+import br.com.ead.home.services.AppointmentService;
+import br.com.ead.home.services.AvailabilityService;
 import br.com.ead.home.services.ClinicianPreferencesService;
-import br.com.ead.home.services.ScheduleService;
+import br.com.ead.home.services.ShiftService;
+import br.com.ead.home.services.api.BookablePreferenceService;
+import br.com.ead.home.services.api.ScheduleAvailabilityService;
+import br.com.ead.home.services.api.ScheduleService;
+import br.com.ead.home.services.api.WorkScheduleService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +29,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
-class ScheduleControllerTest {
+class ScheduleAvailabilityControllerTest {
 
     private static final LocalDate today = LocalDate.now();
     private static final LocalTime eight = LocalTime.of(8,0 ,0);
@@ -35,10 +41,12 @@ class ScheduleControllerTest {
     private ShiftRepository shiftRepository = new MockShiftRepository(systemClockProvider);
     private ClinicianPreferencesRepository clinicianPreferencesRepository = new MockClinicianPreferencesRepository(systemClockProvider);
 
-    private ClinicianPreferencesService clinicianPreferencesService = new ClinicianPreferencesService(clinicianPreferencesRepository);
+    private ScheduleService scheduleService = new AppointmentService(appointmentRepository);
+    private WorkScheduleService shiftService = new ShiftService(shiftRepository);
+    private BookablePreferenceService clinicianPreferencesService = new ClinicianPreferencesService(clinicianPreferencesRepository);
 
-    private ScheduleService scheduleService = new ScheduleService(appointmentRepository, shiftRepository, clinicianPreferencesService);
-    private ScheduleController classUnderTest = new ScheduleController(scheduleService);
+    private ScheduleAvailabilityService availabilityService = new AvailabilityService(scheduleService, shiftService, clinicianPreferencesService);
+    private ScheduleAvailabilityController classUnderTest = new ScheduleAvailabilityController(availabilityService);
 
     @Test
     @DisplayName("Should find all bookable availabilities when requesting by clinicianId")

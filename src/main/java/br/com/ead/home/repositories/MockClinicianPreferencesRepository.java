@@ -1,7 +1,7 @@
 package br.com.ead.home.repositories;
 
 import br.com.ead.home.configurations.SystemClockProvider;
-import br.com.ead.home.models.ClinicianSchedulePreferences;
+import br.com.ead.home.models.SchedulePreferences;
 import br.com.ead.home.models.api.TimeSlotPreferences;
 import br.com.ead.home.models.primitives.ClinicianId;
 
@@ -12,7 +12,7 @@ public record MockClinicianPreferencesRepository(SystemClockProvider systemClock
 
     @Override
     public Optional<TimeSlotPreferences> findClinicianPreferences(ClinicianId clinicianId) {
-        return Optional.of(ClinicianSchedulePreferences.builder()
+        return Optional.of(SchedulePreferences.builder()
                 .meetingLength(Duration.ofHours(1))
                 .build());
     }

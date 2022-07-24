@@ -1,6 +1,5 @@
 package br.com.ead.home.models.api;
 
-import br.com.ead.home.models.OverlapPossibility;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 

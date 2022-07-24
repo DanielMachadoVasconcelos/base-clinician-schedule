@@ -5,8 +5,10 @@ import br.com.ead.home.models.Schedule;
 import br.com.ead.home.models.Shift;
 import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
-import br.com.ead.home.repositories.AppointmentRepository;
-import br.com.ead.home.repositories.ShiftRepository;
+import br.com.ead.home.services.api.BookablePreferenceService;
+import br.com.ead.home.services.api.ScheduleAvailabilityService;
+import br.com.ead.home.services.api.ScheduleService;
+import br.com.ead.home.services.api.WorkScheduleService;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
 
@@ -18,9 +20,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Log4j2
-public record ScheduleService(AppointmentRepository appointmentRepository,
-                              ShiftRepository shiftRepository,
-                              ClinicianPreferencesService clinicianPreferences) {
+public record AvailabilityService(ScheduleService scheduleService,
+                                  WorkScheduleService shiftService,
+                                  BookablePreferenceService clinicianPreferences) implements ScheduleAvailabilityService {
 
     public Set<TimeSlot> getBookableAvailabilities(ClinicianId clinicianId,
                                                    ZonedDateTime startAt,
@@ -30,12 +32,12 @@ public record ScheduleService(AppointmentRepository appointmentRepository,
         Preconditions.checkNotNull(clinicianId, "A StartAt is mandatory");
         Preconditions.checkNotNull(clinicianId, "A EndAt is mandatory");
 
-        Map<ClinicianId, Schedule> shifts = shiftRepository.findAllByClinicianId(clinicianId).stream()
+        Map<ClinicianId, Schedule> shifts = shiftService.findAllByClinicianId(clinicianId).stream()
                 .collect(Collectors.toMap(Shift::clinicianId,
                         shift -> new Schedule(shift.clinicianId(), Set.of(shift), Set.of()),
                         Schedule::mergeByClinician));
 
-        Map<ClinicianId, Schedule> appointments = appointmentRepository.findAllByClinicianId(clinicianId).stream()
+        Map<ClinicianId, Schedule> appointments = scheduleService.findAllByClinicianId(clinicianId).stream()
                 .collect(Collectors.toMap(Appointment::clinicianId,
                         appointment -> new Schedule(appointment.clinicianId(), Set.of(), Set.of(appointment)),
                         Schedule::mergeByClinician));

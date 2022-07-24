@@ -1,4 +1,4 @@
-package br.com.ead.home.models;
+package br.com.ead.home.models.api;
 
 public enum OverlapPossibility {
   EQUALS,                     // Starts and ends at the same time as other

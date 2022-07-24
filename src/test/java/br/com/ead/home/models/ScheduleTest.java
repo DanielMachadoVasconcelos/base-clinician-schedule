@@ -22,7 +22,7 @@ class ScheduleTest {
 
         // when: getting the bookable availability
         Set<TimeSlot> available = schedule.getBookableAvailability(
-            ClinicianSchedulePreferences.builder()
+            SchedulePreferences.builder()
                     .meetingLength(Duration.ofHours(1))
                     .build());
 

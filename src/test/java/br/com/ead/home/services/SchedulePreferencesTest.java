@@ -1,6 +1,6 @@
 package br.com.ead.home.services;
 
-import br.com.ead.home.models.ClinicianSchedulePreferences;
+import br.com.ead.home.models.SchedulePreferences;
 import br.com.ead.home.models.Slot;
 import br.com.ead.home.models.api.TimeSlot;
 import org.apache.commons.collections4.IterableUtils;
@@ -16,7 +16,7 @@ import java.util.Set;
 
 import static helpers.TimeSlotHelper.time;
 
-class ClinicianSchedulePreferencesTest {
+class SchedulePreferencesTest {
 
     @Test
     @DisplayName("Should find all availability when requesting with Doctor Schedule Configuration")
@@ -26,7 +26,7 @@ class ClinicianSchedulePreferencesTest {
         Slot shift = new Slot(time(tomorrow, "08:00"), time(tomorrow, "18:00"));
 
         // given: the doctor has a schedule configuration
-        ClinicianSchedulePreferences configuration = ClinicianSchedulePreferences.builder()
+        SchedulePreferences configuration = SchedulePreferences.builder()
                 .bufferBetweenMeetings(Duration.ofMinutes(15))
                 .meetingLength(Duration.ofHours(1))
                 .onlyMaximumOfFreeSlots(6L)
@@ -57,7 +57,7 @@ class ClinicianSchedulePreferencesTest {
         Duration expectedNextMeetingOnlyIn = Duration.ofHours(4);
 
         // given: the doctor has a schedule configuration
-        ClinicianSchedulePreferences configuration = ClinicianSchedulePreferences.builder()
+        SchedulePreferences configuration = SchedulePreferences.builder()
                 .bufferBetweenMeetings(Duration.ofMinutes(15))
                 .nextMeetingOnlyIn(expectedNextMeetingOnlyIn)
                 .meetingLength(Duration.ofHours(1))

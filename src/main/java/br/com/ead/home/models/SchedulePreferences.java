@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 @Data
 @Builder
 @RequiredArgsConstructor
-public final class ClinicianSchedulePreferences implements TimeSlotPreferences {
+public final class SchedulePreferences implements TimeSlotPreferences {
 
     private final Duration meetingLength;
     private final Duration bufferBetweenMeetings;
