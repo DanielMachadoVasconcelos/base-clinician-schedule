@@ -7,7 +7,7 @@ import br.com.ead.home.services.api.WorkScheduleService;
 
 import java.util.Set;
 
-public record ShiftService(ShiftRepository repository) implements WorkScheduleService {
+public record ClinicianWorkScheduleService(ShiftRepository repository) implements WorkScheduleService {
 
     public Set<Shift> findAllByClinicianId(ClinicianId clinicianId) {
         return repository.findAllByClinicianId(clinicianId);

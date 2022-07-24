@@ -7,16 +7,14 @@ import br.com.ead.home.repositories.AppointmentRepository;
 import br.com.ead.home.repositories.ClinicianPreferencesRepository;
 import br.com.ead.home.repositories.MockAppointmentRepository;
 import br.com.ead.home.repositories.MockClinicianPreferencesRepository;
-import br.com.ead.home.repositories.MockShiftRepository;
-import br.com.ead.home.repositories.ShiftRepository;
 import br.com.ead.home.services.AppointmentService;
 import br.com.ead.home.services.AvailabilityService;
 import br.com.ead.home.services.ClinicianPreferencesService;
-import br.com.ead.home.services.ShiftService;
 import br.com.ead.home.services.api.BookablePreferenceService;
 import br.com.ead.home.services.api.ScheduleAvailabilityService;
 import br.com.ead.home.services.api.ScheduleService;
 import br.com.ead.home.services.api.WorkScheduleService;
+import br.com.ead.home.services.delegates.factories.WorkScheduleDelegateFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,11 +36,10 @@ class ScheduleAvailabilityControllerTest {
     private static final SystemClockProvider systemClockProvider = () -> Clock.fixed(virtualToday, ZoneOffset.UTC);
 
     private AppointmentRepository appointmentRepository = new MockAppointmentRepository(systemClockProvider);
-    private ShiftRepository shiftRepository = new MockShiftRepository(systemClockProvider);
     private ClinicianPreferencesRepository clinicianPreferencesRepository = new MockClinicianPreferencesRepository(systemClockProvider);
 
     private ScheduleService scheduleService = new AppointmentService(appointmentRepository);
-    private WorkScheduleService shiftService = new ShiftService(shiftRepository);
+    private WorkScheduleService shiftService = WorkScheduleDelegateFactory.createClinicianWorkScheduleService();
     private BookablePreferenceService clinicianPreferencesService = new ClinicianPreferencesService(clinicianPreferencesRepository);
 
     private ScheduleAvailabilityService availabilityService = new AvailabilityService(scheduleService, shiftService, clinicianPreferencesService);
