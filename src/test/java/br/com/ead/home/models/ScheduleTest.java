@@ -2,17 +2,13 @@ package br.com.ead.home.models;
 
 import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
-import br.com.ead.home.services.ClinicianScheduleConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.time.Clock;
 import java.time.Duration;
-import java.time.ZoneOffset;
 import java.util.Set;
 
 import static helpers.TimeSlotHelper.time;
-import static org.junit.jupiter.api.Assertions.*;
 
 class ScheduleTest {
 
@@ -26,9 +22,8 @@ class ScheduleTest {
 
         // when: getting the bookable availability
         Set<TimeSlot> available = schedule.getBookableAvailability(
-            new ClinicianScheduleConfiguration.Builder()
-                    .setClock(Clock.fixed(time("08:00").toInstant(), ZoneOffset.UTC))
-                    .setMeetingLength(Duration.ofHours(1))
+            ClinicianSchedulePreferences.builder()
+                    .meetingLength(Duration.ofHours(1))
                     .build());
 
         // then: the is full day of availability

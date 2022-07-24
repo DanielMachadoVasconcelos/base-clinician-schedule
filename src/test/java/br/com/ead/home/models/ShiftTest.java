@@ -2,7 +2,6 @@ package br.com.ead.home.models;
 
 import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
-import com.google.common.collect.Sets;
 import org.apache.commons.collections4.IterableUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
