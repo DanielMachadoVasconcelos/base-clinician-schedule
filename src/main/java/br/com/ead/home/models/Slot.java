@@ -2,8 +2,6 @@ package br.com.ead.home.models;
 
 import br.com.ead.home.models.api.TimeSlot;
 import com.google.common.base.Preconditions;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 

@@ -12,11 +12,14 @@ import br.com.ead.home.services.TimeSlotSlicer;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
-import java.time.*;
-import java.util.HashMap;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
