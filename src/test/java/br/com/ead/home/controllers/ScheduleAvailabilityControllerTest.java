@@ -39,7 +39,7 @@ class ScheduleAvailabilityControllerTest {
     private ClinicianPreferencesRepository clinicianPreferencesRepository = new MockClinicianPreferencesRepository(systemClockProvider);
 
     private ScheduleService scheduleService = new AppointmentService(appointmentRepository);
-    private WorkScheduleService shiftService = WorkScheduleDelegateFactory.createClinicianWorkScheduleService();
+    private WorkScheduleService shiftService = WorkScheduleDelegateFactory.createWorkScheduleService();
     private BookablePreferenceService clinicianPreferencesService = new ClinicianPreferencesService(clinicianPreferencesRepository);
 
     private ScheduleAvailabilityService availabilityService = new AvailabilityService(scheduleService, shiftService, clinicianPreferencesService);
