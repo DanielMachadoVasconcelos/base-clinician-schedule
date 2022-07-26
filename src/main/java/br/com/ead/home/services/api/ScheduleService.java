@@ -2,7 +2,6 @@ package br.com.ead.home.services.api;
 
 import br.com.ead.home.models.Appointment;
 import br.com.ead.home.models.primitives.ClinicianId;
-import br.com.ead.home.services.Service;
 
 import java.util.Set;
 
