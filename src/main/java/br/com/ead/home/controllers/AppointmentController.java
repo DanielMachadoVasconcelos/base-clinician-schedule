@@ -9,7 +9,7 @@ import org.apache.commons.lang3.NotImplementedException;
 
 public record AppointmentController(AppointmentService appointmentService) {
 
-    // TODO: create a service method to validate, create and persist an appointment.
+    // TODO: create a service method to validate, create and persist an appointment. Using different validations for every partition
     public Appointment createAppointment(ClinicianId clinicianId, PatientId patientId, TimeSlot timeSlot) {
         throw new NotImplementedException("Not implemented yet");
     }
