@@ -8,6 +8,7 @@ import br.com.ead.home.services.delegates.types.ServicePartitionType;
 import br.com.ead.home.services.delegates.types.ServiceStageType;
 import lombok.extern.log4j.Log4j2;
 
+import static br.com.ead.home.services.delegates.types.ServicePartitionType.FRANCE;
 import static br.com.ead.home.services.delegates.types.ServicePartitionType.SWEDEN;
 import static br.com.ead.home.services.delegates.types.ServiceStageType.UNIT_TEST;
 
@@ -18,6 +19,7 @@ public record WorkScheduleServiceLookup(NamespaceResolver namespaceResolver) imp
 
     public WorkScheduleServiceLookup {
         register.registerBean(namespaceResolver.resolve(UNIT_TEST, SWEDEN, WorkScheduleService.class.getName()), WorkScheduleBeanFactory::creatUnitTest);
+        register.registerBean(namespaceResolver.resolve(UNIT_TEST, FRANCE, WorkScheduleService.class.getName()), WorkScheduleBeanFactory::creatUnitTest);
     }
 
     public WorkScheduleService getService(ServiceStageType stage, ServicePartitionType partition) {

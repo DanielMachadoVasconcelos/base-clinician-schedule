@@ -45,4 +45,23 @@ class ScheduleAvailabilityControllerTest {
             () -> Assertions.assertFalse(availabilities.isEmpty(), "Must return some availability")
         );
     }
+
+    @Test
+    @DisplayName("Should find no bookable availabilities when requesting with unknown clinicianId")
+    void shouldFindNoBookableAvailabilityWhenRequestingWithUnknownClinicianId() {
+
+        // given: the expected clinicianId
+        ClinicianId expectedClinicianId = new ClinicianId("unknown");
+        ZonedDateTime today = ZonedDateTime.now(clockProvider.currentSystemClock());
+
+        // when: getting the clinician bookable availability
+        Set<TimeSlot> availabilities =
+                classUnderTest.getBookableAvailabilities(expectedClinicianId, today, today.plusDays(1));
+
+        // then: some availability is found
+        Assertions.assertAll(
+                () -> Assertions.assertNotNull(availabilities, "Must not return null"),
+                () -> Assertions.assertTrue(availabilities.isEmpty(), "Must return no availability")
+        );
+    }
 }

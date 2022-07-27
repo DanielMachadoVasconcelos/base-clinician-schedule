@@ -8,6 +8,7 @@ import br.com.ead.home.services.delegates.types.ServicePartitionType;
 import br.com.ead.home.services.delegates.types.ServiceStageType;
 import lombok.extern.log4j.Log4j2;
 
+import static br.com.ead.home.services.delegates.types.ServicePartitionType.FRANCE;
 import static br.com.ead.home.services.delegates.types.ServicePartitionType.SWEDEN;
 import static br.com.ead.home.services.delegates.types.ServiceStageType.UNIT_TEST;
 
@@ -18,6 +19,7 @@ public record BookablePreferencesServiceLookup(NamespaceResolver namespaceResolv
 
     public BookablePreferencesServiceLookup {
         register.registerBean(namespaceResolver.resolve(UNIT_TEST, SWEDEN, BookablePreferenceService.class.getName()), BookablePreferencesServiceBeanFactory::creatUnitTest);
+        register.registerBean(namespaceResolver.resolve(UNIT_TEST, FRANCE, BookablePreferenceService.class.getName()), BookablePreferencesServiceBeanFactory::creatUnitTest);
     }
 
     @Override

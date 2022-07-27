@@ -20,8 +20,28 @@ import java.util.stream.Stream;
 @Log4j2
 public record MockAppointmentRepository(ClockProvider clockProvider) implements AppointmentRepository {
 
+    private static final Set<String> CLINICIANS = Set.of("Thomas", "Sara", "Robert", "Anton", "Pedro", "Daniel", "Karl", "Harry", "Nikita", "Lee Niko");
+
     @Override
     public Set<Appointment> findAllByClinicianId(ClinicianId clinicianId) {
+        return CLINICIANS.stream()
+                .map(ClinicianId::new)
+                .filter(clinicianId::equals)
+                .map(this::createFakeAppointments)
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<Appointment> findAllAppointments() {
+        log.debug("Getting all Appointments in the database");
+        return CLINICIANS.stream()
+                .map(ClinicianId::new)
+                .map(this::findAllByClinicianId)
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet());
+    }
+
+    private Set<Appointment> createFakeAppointments(ClinicianId clinicianId) {
         log.debug("Getting all Appointments in the database for clinician={}", clinicianId.value());
         ZonedDateTime seed = ZonedDateTime.now(clockProvider.currentSystemClock());
 
@@ -36,15 +56,6 @@ public record MockAppointmentRepository(ClockProvider clockProvider) implements 
 
         log.debug("Got total={} appointments from Clinician={}", appointments.size(), clinicianId);
         return appointments;
-    }
-
-    public Set<Appointment> findAllAppointments() {
-        log.debug("Getting all Appointments in the database");
-        return Stream.of("Thomas", "Sara", "Robert", "Anton", "Pedro", "Daniel", "Karl", "Harry", "Nikita", "Lee Niko")
-                .map(ClinicianId::new)
-                .map(this::findAllByClinicianId)
-                .flatMap(Set::stream)
-                .collect(Collectors.toSet());
     }
 
     private static boolean filterOutRandomly(TimeSlot timeSlot) {
