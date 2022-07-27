@@ -1,6 +1,7 @@
 package br.com.ead.home.controllers;
 
-import br.com.ead.home.configurations.SystemClockProvider;
+import br.com.ead.home.configurations.ClockProvider;
+import br.com.ead.home.configurations.MockSystemClockProvider;
 import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
 import br.com.ead.home.services.AvailabilityService;
@@ -13,21 +14,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
 class ScheduleAvailabilityControllerTest {
-
-    private static final LocalDate today = LocalDate.now();
-    private static final LocalTime eight = LocalTime.of(8,0 ,0);
-
-    private static final Instant virtualToday = ZonedDateTime.of(today, eight, ZoneOffset.UTC).toInstant();
-    private static final SystemClockProvider systemClockProvider = () -> Clock.fixed(virtualToday, ZoneOffset.UTC);
 
     private ScheduleService scheduleService = ApplicationDelegateFactory.scheduleService();
     private WorkScheduleService shiftService = ApplicationDelegateFactory.workScheduleService();
@@ -35,6 +25,7 @@ class ScheduleAvailabilityControllerTest {
 
     private ScheduleAvailabilityService availabilityService = new AvailabilityService(scheduleService, shiftService, clinicianPreferencesService);
     private ScheduleAvailabilityController classUnderTest = new ScheduleAvailabilityController(availabilityService);
+    private ClockProvider clockProvider = new MockSystemClockProvider();
 
     @Test
     @DisplayName("Should find all bookable availabilities when requesting by clinicianId")
@@ -42,7 +33,7 @@ class ScheduleAvailabilityControllerTest {
 
         // given: the expected clinicianId
         ClinicianId expectedClinicianId = new ClinicianId("Thomas");
-        ZonedDateTime today = ZonedDateTime.now(systemClockProvider.currentSystemClock());
+        ZonedDateTime today = ZonedDateTime.now(clockProvider.currentSystemClock());
 
         // when: getting the clinician bookable availability
         Set<TimeSlot> availabilities =

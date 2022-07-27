@@ -1,6 +1,6 @@
 package br.com.ead.home.repositories;
 
-import br.com.ead.home.configurations.SystemClockProvider;
+import br.com.ead.home.configurations.ClockProvider;
 import br.com.ead.home.models.Shift;
 import br.com.ead.home.models.Slot;
 import br.com.ead.home.models.api.TimeSlot;
@@ -15,12 +15,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Log4j2
-public record MockClinicianWorkScheduleRepository(SystemClockProvider systemClockProvider) implements ShiftRepository {
+public record MockClinicianWorkScheduleRepository(ClockProvider clockProvider) implements ShiftRepository {
 
     @Override
     public Set<Shift> findAllByClinicianId(ClinicianId clinicianId) {
         log.debug("Getting all Shifts in the database for clinician={}", clinicianId.value());
-        ZonedDateTime seed = ZonedDateTime.now(systemClockProvider.currentSystemClock());
+        ZonedDateTime seed = ZonedDateTime.now(clockProvider.currentSystemClock());
 
         Predicate<ZonedDateTime> hasNext = item -> seed.plusDays(180).isAfter(item);
         UnaryOperator<ZonedDateTime> next = item -> item.plusDays(1);
