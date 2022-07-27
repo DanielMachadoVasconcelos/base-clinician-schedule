@@ -1,7 +1,6 @@
 package br.com.ead.home.services.delegates.lookups;
 
 import br.com.ead.home.services.api.BookablePreferenceService;
-import br.com.ead.home.services.api.ScheduleService;
 import br.com.ead.home.services.delegates.beans.BookablePreferencesServiceBeanFactory;
 import br.com.ead.home.services.delegates.namespace.NamespaceResolver;
 import br.com.ead.home.services.delegates.register.ApplicationBeanRegister;

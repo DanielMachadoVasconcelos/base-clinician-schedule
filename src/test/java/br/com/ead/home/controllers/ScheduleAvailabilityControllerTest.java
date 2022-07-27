@@ -1,21 +1,14 @@
 package br.com.ead.home.controllers;
 
-import br.com.ead.home.configurations.Environment;
 import br.com.ead.home.configurations.SystemClockProvider;
 import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
-import br.com.ead.home.repositories.ClinicianPreferencesRepository;
-import br.com.ead.home.repositories.MockClinicianPreferencesRepository;
 import br.com.ead.home.services.AvailabilityService;
-import br.com.ead.home.services.ClinicianPreferencesService;
 import br.com.ead.home.services.api.BookablePreferenceService;
 import br.com.ead.home.services.api.ScheduleAvailabilityService;
 import br.com.ead.home.services.api.ScheduleService;
 import br.com.ead.home.services.api.WorkScheduleService;
 import br.com.ead.home.services.delegates.factories.ApplicationDelegateFactory;
-import br.com.ead.home.services.delegates.factories.BookablePreferenceServiceDelegateFactory;
-import br.com.ead.home.services.delegates.factories.ScheduleServiceDelegateFactory;
-import br.com.ead.home.services.delegates.factories.WorkScheduleServiceDelegateFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
