@@ -1,8 +1,6 @@
 package br.com.ead.home.services.delegates.lookups;
 
-import br.com.ead.home.services.api.ScheduleService;
 import br.com.ead.home.services.api.WorkScheduleService;
-import br.com.ead.home.services.delegates.beans.ScheduleBeanFactory;
 import br.com.ead.home.services.delegates.beans.WorkScheduleBeanFactory;
 import br.com.ead.home.services.delegates.namespace.NamespaceResolver;
 import br.com.ead.home.services.delegates.register.ApplicationBeanRegister;
@@ -24,7 +22,7 @@ public record WorkScheduleServiceLookup(NamespaceResolver namespaceResolver) imp
 
     public WorkScheduleService getService(ServiceStageType stage, ServicePartitionType partition) {
         WorkScheduleService bean = (WorkScheduleService) register.getBean(stage, partition, WorkScheduleService.class.getName());
-        log.info("Looking up for work schedule service. Using Stage %s and Partition %s bean".formatted(stage, partition));
+        log.debug("Looking up for work schedule service. Using Stage %s and Partition %s bean".formatted(stage, partition));
         return bean;
     }
 }

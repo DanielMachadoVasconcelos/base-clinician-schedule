@@ -10,7 +10,7 @@ public record ScheduleServiceDelegateFactory(Environment environment) {
     public ScheduleServiceDelegate createScheduleService() {
         var partition = environment.getPartition();
         var stage = environment.getStage();
-        log.info("Delegating to schedule service. Using Stage %s and Partition %s bean".formatted(stage, partition));
+        log.debug("Delegating to schedule service. Using Stage %s and Partition %s bean".formatted(stage, partition));
         return new ScheduleServiceDelegate(stage, partition);
     }
 }

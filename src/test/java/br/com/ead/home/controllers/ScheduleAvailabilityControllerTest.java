@@ -12,6 +12,8 @@ import br.com.ead.home.services.api.BookablePreferenceService;
 import br.com.ead.home.services.api.ScheduleAvailabilityService;
 import br.com.ead.home.services.api.ScheduleService;
 import br.com.ead.home.services.api.WorkScheduleService;
+import br.com.ead.home.services.delegates.factories.ApplicationDelegateFactory;
+import br.com.ead.home.services.delegates.factories.BookablePreferenceServiceDelegateFactory;
 import br.com.ead.home.services.delegates.factories.ScheduleServiceDelegateFactory;
 import br.com.ead.home.services.delegates.factories.WorkScheduleServiceDelegateFactory;
 import org.junit.jupiter.api.Assertions;
@@ -34,11 +36,9 @@ class ScheduleAvailabilityControllerTest {
     private static final Instant virtualToday = ZonedDateTime.of(today, eight, ZoneOffset.UTC).toInstant();
     private static final SystemClockProvider systemClockProvider = () -> Clock.fixed(virtualToday, ZoneOffset.UTC);
 
-    private ClinicianPreferencesRepository clinicianPreferencesRepository = new MockClinicianPreferencesRepository(systemClockProvider);
-
-    private ScheduleService scheduleService = new ScheduleServiceDelegateFactory(new Environment()).createScheduleService();
-    private WorkScheduleService shiftService = new WorkScheduleServiceDelegateFactory(new Environment()).createWorkScheduleService();
-    private BookablePreferenceService clinicianPreferencesService = new ClinicianPreferencesService(clinicianPreferencesRepository);
+    private ScheduleService scheduleService = ApplicationDelegateFactory.scheduleService();
+    private WorkScheduleService shiftService = ApplicationDelegateFactory.workScheduleService();
+    private BookablePreferenceService clinicianPreferencesService = ApplicationDelegateFactory.bookablePreferenceService();
 
     private ScheduleAvailabilityService availabilityService = new AvailabilityService(scheduleService, shiftService, clinicianPreferencesService);
     private ScheduleAvailabilityController classUnderTest = new ScheduleAvailabilityController(availabilityService);

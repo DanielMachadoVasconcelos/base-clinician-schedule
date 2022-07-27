@@ -1,6 +1,5 @@
 package br.com.ead.home.services.delegates.register;
 
-import br.com.ead.home.services.api.ScheduleService;
 import br.com.ead.home.services.api.Service;
 import br.com.ead.home.services.delegates.namespace.EnvironmentNamespaceResolver;
 import br.com.ead.home.services.delegates.namespace.NamespaceResolver;
@@ -52,7 +51,7 @@ public final class ApplicationBeanRegister implements Register<Service> {
         }
 
         Service bean = beanProvider.get();
-        log.debug("Registering bean on namespace {}", namespace);
+        log.info("Registering bean {} on namespace {}", bean.getClass().getName(), namespace);
         BEAN_REGISTER.put(namespace, bean);
     }
 }

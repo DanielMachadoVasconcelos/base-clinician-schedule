@@ -8,8 +8,8 @@ import br.com.ead.home.services.delegates.types.ServicePartitionType;
 import br.com.ead.home.services.delegates.types.ServiceStageType;
 import lombok.extern.log4j.Log4j2;
 
-import static br.com.ead.home.services.delegates.types.ServicePartitionType.*;
-import static br.com.ead.home.services.delegates.types.ServiceStageType.*;
+import static br.com.ead.home.services.delegates.types.ServicePartitionType.SWEDEN;
+import static br.com.ead.home.services.delegates.types.ServiceStageType.UNIT_TEST;
 
 @Log4j2
 public record ScheduleServiceLookup(NamespaceResolver namespaceResolver) implements ServiceLookup<ScheduleService> {
@@ -22,7 +22,7 @@ public record ScheduleServiceLookup(NamespaceResolver namespaceResolver) impleme
 
     public ScheduleService getService(ServiceStageType stage, ServicePartitionType partition) {
         ScheduleService bean = (ScheduleService) register.getBean(stage, partition, ScheduleService.class.getName());
-        log.info("Looking up for work schedule service. Using Stage %s and Partition %s bean".formatted(stage, partition));
+        log.debug("Looking up for work schedule service. Using Stage %s and Partition %s bean".formatted(stage, partition));
         return bean;
     }
 }
