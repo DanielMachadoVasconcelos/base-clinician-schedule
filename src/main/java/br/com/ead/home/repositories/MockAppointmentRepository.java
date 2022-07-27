@@ -1,6 +1,6 @@
 package br.com.ead.home.repositories;
 
-import br.com.ead.home.configurations.SystemClockProvider;
+import br.com.ead.home.configurations.ClockProvider;
 import br.com.ead.home.models.Appointment;
 import br.com.ead.home.models.Slot;
 import br.com.ead.home.models.api.TimeSlot;
@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Log4j2
-public record MockAppointmentRepository(SystemClockProvider systemClockProvider) implements AppointmentRepository {
+public record MockAppointmentRepository(ClockProvider clockProvider) implements AppointmentRepository {
 
     @Override
     public Set<Appointment> findAllByClinicianId(ClinicianId clinicianId) {
         log.debug("Getting all Appointments in the database for clinician={}", clinicianId.value());
-        ZonedDateTime seed = ZonedDateTime.now(systemClockProvider.currentSystemClock());
+        ZonedDateTime seed = ZonedDateTime.now(clockProvider.currentSystemClock());
 
         Predicate<ZonedDateTime> hasNext = item -> seed.plusDays(180).isAfter(item);
         UnaryOperator<ZonedDateTime> next = item -> item.plusMinutes(30);

@@ -7,7 +7,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 @FunctionalInterface
-public interface SystemClockProvider {
+public interface ClockProvider {
 
     Clock currentSystemClock();
 
