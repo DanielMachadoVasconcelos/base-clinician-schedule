@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Log4j2
-public record MockShiftRepository(SystemClockProvider systemClockProvider) implements ShiftRepository {
+public record MockClinicianWorkScheduleRepository(SystemClockProvider systemClockProvider) implements ShiftRepository {
 
     @Override
     public Set<Shift> findAllByClinicianId(ClinicianId clinicianId) {
