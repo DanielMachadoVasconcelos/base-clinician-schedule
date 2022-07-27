@@ -4,8 +4,7 @@ import br.com.ead.home.models.Shift;
 import br.com.ead.home.models.primitives.ClinicianId;
 import br.com.ead.home.services.api.WorkScheduleService;
 import br.com.ead.home.services.delegates.lookups.WorkScheduleServiceLookup;
-import br.com.ead.home.services.delegates.namespace.DefaultNamespaceResolver;
-import br.com.ead.home.services.delegates.register.WorkScheduleRegister;
+import br.com.ead.home.services.delegates.namespace.EnvironmentNamespaceResolver;
 import br.com.ead.home.services.delegates.types.ServicePartitionType;
 import br.com.ead.home.services.delegates.types.ServiceStageType;
 
@@ -13,7 +12,7 @@ import java.util.Set;
 
 public record WorkScheduleDelegate(ServiceStageType stage, ServicePartitionType partition) implements WorkScheduleService {
 
-    private static final WorkScheduleServiceLookup lookup = new WorkScheduleServiceLookup(new WorkScheduleRegister(new DefaultNamespaceResolver()));
+    private static final WorkScheduleServiceLookup lookup = new WorkScheduleServiceLookup(new EnvironmentNamespaceResolver());
 
     @Override
     public Set<Shift> findAllByClinicianId(ClinicianId clinicianId) {
