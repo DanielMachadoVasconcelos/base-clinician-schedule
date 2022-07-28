@@ -17,6 +17,8 @@ repositories {
 }
 
 dependencies {
+
+    implementation 'org.springframework:spring-context:5.3.22'
     implementation 'io.reactivex.rxjava3:rxjava:3.1.5'
 
     implementation 'com.google.guava:guava:31.1-jre'

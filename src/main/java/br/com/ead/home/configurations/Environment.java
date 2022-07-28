@@ -1,11 +1,13 @@
 package br.com.ead.home.configurations;
 
-import br.com.ead.home.services.delegates.types.ServicePartitionType;
-import br.com.ead.home.services.delegates.types.ServiceStageType;
+import br.com.ead.home.configurations.types.ServicePartitionType;
+import br.com.ead.home.configurations.types.ServiceStageType;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+@Component
 public class Environment {
 
     public ServicePartitionType getPartition() {

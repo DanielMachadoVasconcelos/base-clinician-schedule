@@ -1,4 +1,4 @@
-package br.com.ead.home.services.api;
+package br.com.ead.home.services;
 
 import br.com.ead.home.models.api.TimeSlotPreferences;
 import br.com.ead.home.models.primitives.ClinicianId;

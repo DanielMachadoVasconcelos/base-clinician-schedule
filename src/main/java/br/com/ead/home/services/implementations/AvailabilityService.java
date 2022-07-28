@@ -1,16 +1,17 @@
-package br.com.ead.home.services;
+package br.com.ead.home.services.implementations;
 
 import br.com.ead.home.models.Appointment;
 import br.com.ead.home.models.Schedule;
 import br.com.ead.home.models.Shift;
 import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
-import br.com.ead.home.services.api.BookablePreferenceService;
-import br.com.ead.home.services.api.ScheduleAvailabilityService;
-import br.com.ead.home.services.api.ScheduleService;
-import br.com.ead.home.services.api.WorkScheduleService;
+import br.com.ead.home.services.BookablePreferenceService;
+import br.com.ead.home.services.ScheduleAvailabilityService;
+import br.com.ead.home.services.ScheduleService;
+import br.com.ead.home.services.WorkScheduleService;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Log4j2
+@Service
 public record AvailabilityService(ScheduleService scheduleService,
                                   WorkScheduleService shiftService,
                                   BookablePreferenceService clinicianPreferences) implements ScheduleAvailabilityService {

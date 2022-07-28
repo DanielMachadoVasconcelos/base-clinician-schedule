@@ -6,6 +6,7 @@ import br.com.ead.home.models.Slot;
 import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Repository;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Log4j2
+@Repository
 public record MockClinicianWorkScheduleRepository(ClockProvider clockProvider) implements ShiftRepository {
 
     private static final Set<String> CLINICIANS = Set.of("Thomas", "Sara", "Robert", "Anton", "Pedro", "Daniel", "Karl", "Harry", "Nikita", "Lee Niko");

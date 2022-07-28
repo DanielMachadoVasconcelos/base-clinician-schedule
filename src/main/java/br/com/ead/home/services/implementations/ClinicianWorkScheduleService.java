@@ -1,12 +1,14 @@
-package br.com.ead.home.services;
+package br.com.ead.home.services.implementations;
 
 import br.com.ead.home.models.Shift;
 import br.com.ead.home.models.primitives.ClinicianId;
 import br.com.ead.home.repositories.ShiftRepository;
-import br.com.ead.home.services.api.WorkScheduleService;
+import br.com.ead.home.services.WorkScheduleService;
+import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
+@Service
 public record ClinicianWorkScheduleService(ShiftRepository repository) implements WorkScheduleService {
 
     public Set<Shift> findAllByClinicianId(ClinicianId clinicianId) {

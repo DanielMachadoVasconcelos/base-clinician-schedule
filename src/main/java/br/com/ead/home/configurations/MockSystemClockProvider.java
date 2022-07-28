@@ -1,5 +1,7 @@
 package br.com.ead.home.configurations;
 
+import org.springframework.stereotype.Component;
+
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -7,6 +9,7 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
+@Component
 public class MockSystemClockProvider implements ClockProvider {
 
     @Override

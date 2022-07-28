@@ -1,4 +1,4 @@
-package br.com.ead.home.services.delegates.types;
+package br.com.ead.home.configurations.types;
 
 public enum ServicePartitionType {
 

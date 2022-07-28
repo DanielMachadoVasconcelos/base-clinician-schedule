@@ -8,6 +8,7 @@ import br.com.ead.home.models.primitives.ClinicianId;
 import br.com.ead.home.models.primitives.PatientId;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.RandomUtils;
+import org.springframework.stereotype.Repository;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Log4j2
+@Repository
 public record MockAppointmentRepository(ClockProvider clockProvider) implements AppointmentRepository {
 
     private static final Set<String> CLINICIANS = Set.of("Thomas", "Sara", "Robert", "Anton", "Pedro", "Daniel", "Karl", "Harry", "Nikita", "Lee Niko");
