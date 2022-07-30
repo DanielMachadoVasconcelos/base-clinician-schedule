@@ -11,4 +11,6 @@ public interface ScheduleService extends Service {
     Set<Appointment> findAllByClinicianId(ClinicianId clinicianId);
 
     Set<Appointment> findAllAppointments();
+
+    Appointment bookAppointment(Appointment appointment);
 }

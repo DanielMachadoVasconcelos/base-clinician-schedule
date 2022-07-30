@@ -12,6 +12,7 @@ import org.apache.commons.lang3.RandomUtils;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -19,27 +20,42 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Log4j2
-public record MockAppointmentRepository(ClockProvider clockProvider) implements AppointmentRepository {
+public class MockAppointmentRepository implements AppointmentRepository {
 
     private static final Set<String> CLINICIANS = Set.of("Thomas", "Sara", "Robert", "Anton", "Pedro", "Daniel", "Karl", "Harry", "Nikita", "Lee Niko");
 
-    @Override
-    public Set<Appointment> findAllByClinicianId(ClinicianId clinicianId) {
-        return CLINICIANS.stream()
+    private final Map<ClinicianId, Set<Appointment>> database;
+    private final ClockProvider clockProvider;
+
+    public MockAppointmentRepository(ClockProvider clockProvider) {
+        this.clockProvider = clockProvider;
+        this.database = CLINICIANS.stream()
                 .map(ClinicianId::new)
-                .filter(clinicianId::equals)
                 .map(this::createFakeAppointments)
                 .flatMap(Set::stream)
-                .collect(Collectors.toSet());
+                .collect(Collectors.groupingBy(Appointment::clinicianId, Collectors.toSet()));
+    }
+
+    @Override
+    public Set<Appointment> findAllByClinicianId(ClinicianId clinicianId) {
+        return database.getOrDefault(clinicianId, Set.of());
     }
 
     public Set<Appointment> findAllAppointments() {
         log.debug("Getting all Appointments in the database");
-        return CLINICIANS.stream()
-                .map(ClinicianId::new)
-                .map(this::findAllByClinicianId)
-                .flatMap(Set::stream)
-                .collect(Collectors.toSet());
+        return database.values().stream().flatMap(Set::stream).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Appointment bookAppointment(Appointment appointment) {
+        if(database.containsKey(appointment.clinicianId())) {
+            Set<Appointment> appointments = database.getOrDefault(appointment.clinicianId(), Set.of());
+            appointments.add(appointment);
+            database.put(appointment.clinicianId(), appointments);
+            return appointment;
+        }
+        database.put(appointment.clinicianId(), Set.of(appointment));
+        return appointment;
     }
 
     private Set<Appointment> createFakeAppointments(ClinicianId clinicianId) {

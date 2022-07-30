@@ -26,4 +26,9 @@ public class ScheduleServiceDelegate implements ScheduleService {
     public Set<Appointment> findAllAppointments() {
         return lookup.lookup().findAllAppointments();
     }
+
+    @Override
+    public Appointment bookAppointment(Appointment appointment) {
+        return lookup.lookup().bookAppointment(appointment);
+    }
 }

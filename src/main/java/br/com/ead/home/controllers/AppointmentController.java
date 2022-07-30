@@ -11,6 +11,7 @@ public record AppointmentController(ScheduleService scheduleService) implements 
 
     // TODO: create a service method to validate, create and persist an appointment. Using different validations for every partition
     public Appointment createAppointment(ClinicianId clinicianId, PatientId patientId, TimeSlot timeSlot) {
-        return new Appointment(clinicianId, patientId, timeSlot);
+        Appointment appointment = new Appointment(clinicianId, patientId, timeSlot);
+        return scheduleService.bookAppointment(appointment);
     }
 }

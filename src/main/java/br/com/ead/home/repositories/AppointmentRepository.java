@@ -12,4 +12,5 @@ public interface AppointmentRepository extends Repository {
 
     Set<Appointment> findAllAppointments();
 
+    Appointment bookAppointment(Appointment appointment);
 }

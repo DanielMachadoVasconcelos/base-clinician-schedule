@@ -30,7 +30,7 @@ public class AppointmentControllerTest extends AbstractIntegrationTest {
     @DisplayName("Should save an Appointment when clinician has availability")
     void shouldSaveAnAppointmentWhenClinicianHasAvailability() {
         // given:
-        ClinicianId clinicianId = new ClinicianId("Thomas");
+        ClinicianId clinicianId = new ClinicianId("Stevenson");
         PatientId patientId = new PatientId("Sara");
         TimeSlot timeSlot = Slot.from(ZonedDateTime.now(), Duration.ofHours(1));
 
@@ -40,7 +40,30 @@ public class AppointmentControllerTest extends AbstractIntegrationTest {
         // then:
         Assertions.assertAll(
             () -> Assertions.assertNotNull(appointment, "Appointment response is mandatory"),
-            () -> Assertions.assertEquals(clinicianId, appointment.clinicianId(), "Clinician is the expected")
+            () -> Assertions.assertEquals(clinicianId, appointment.clinicianId(), "ClinicianId is the expected"),
+            () -> Assertions.assertEquals(patientId, appointment.patientId(), "PatientId is the expected"),
+            () -> Assertions.assertEquals(timeSlot, appointment.timeSlot(), "Time Slot is the expected")
         );
+    }
+
+    @Test
+    @DisplayName("Should save an Appointment when clinician has availability")
+    void shouldNotSaveAnAppointmentWhenTimeSlotOverlaps() {
+        // given:
+        ClinicianId clinicianId = new ClinicianId("Bara");
+        PatientId patientId = new PatientId("Sara");
+        TimeSlot timeSlot = Slot.from(ZonedDateTime.now(), Duration.ofHours(1));
+
+        // and:
+        Appointment firstAppointment = classUnderTest.createAppointment(clinicianId, patientId, timeSlot);
+        Assertions.assertNotNull(firstAppointment);
+
+        // when:
+        PatientId anotherPatientId = new PatientId("Bruno");
+        IllegalStateException validation = Assertions.assertThrows(IllegalStateException.class,
+                () -> classUnderTest.createAppointment(clinicianId, anotherPatientId, timeSlot));
+
+        // then:
+        Assertions.assertEquals("Time slot overlap other appointment", validation.getMessage());
     }
 }
