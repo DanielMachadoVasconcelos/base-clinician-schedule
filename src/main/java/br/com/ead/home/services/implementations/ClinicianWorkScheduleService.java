@@ -1,9 +1,9 @@
-package br.com.ead.home.services;
+package br.com.ead.home.services.implementations;
 
 import br.com.ead.home.models.Shift;
 import br.com.ead.home.models.primitives.ClinicianId;
 import br.com.ead.home.repositories.ShiftRepository;
-import br.com.ead.home.services.api.WorkScheduleService;
+import br.com.ead.home.services.WorkScheduleService;
 
 import java.util.Set;
 

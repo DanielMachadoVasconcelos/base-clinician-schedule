@@ -1,15 +1,15 @@
 package br.com.ead.home.controllers;
 
-import br.com.ead.home.configurations.ClockProvider;
-import br.com.ead.home.configurations.MockSystemClockProvider;
+import br.com.ead.home.configurations.system.ClockProvider;
+import br.com.ead.home.configurations.system.MockSystemClockProvider;
 import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
-import br.com.ead.home.services.AvailabilityService;
-import br.com.ead.home.services.api.BookablePreferenceService;
-import br.com.ead.home.services.api.ScheduleAvailabilityService;
-import br.com.ead.home.services.api.ScheduleService;
-import br.com.ead.home.services.api.WorkScheduleService;
+import br.com.ead.home.services.BookablePreferenceService;
+import br.com.ead.home.services.ScheduleAvailabilityService;
+import br.com.ead.home.services.ScheduleService;
+import br.com.ead.home.services.WorkScheduleService;
 import br.com.ead.home.services.delegates.factories.ApplicationDelegateFactory;
+import br.com.ead.home.services.implementations.AvailabilityService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

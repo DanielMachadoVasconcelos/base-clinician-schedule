@@ -1,9 +1,9 @@
-package br.com.ead.home.services;
+package br.com.ead.home.services.implementations;
 
 import br.com.ead.home.models.Appointment;
 import br.com.ead.home.models.primitives.ClinicianId;
 import br.com.ead.home.repositories.AppointmentRepository;
-import br.com.ead.home.services.api.ScheduleService;
+import br.com.ead.home.services.ScheduleService;
 
 import java.util.Set;
 

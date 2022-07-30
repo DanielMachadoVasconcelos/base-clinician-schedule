@@ -1,16 +1,16 @@
 package br.com.ead.home.services.delegates.lookups;
 
-import br.com.ead.home.services.api.BookablePreferenceService;
+import br.com.ead.home.common.types.PartitionType;
+import br.com.ead.home.common.types.StageType;
+import br.com.ead.home.services.BookablePreferenceService;
 import br.com.ead.home.services.delegates.beans.BookablePreferencesServiceBeanFactory;
 import br.com.ead.home.services.delegates.namespace.NamespaceResolver;
 import br.com.ead.home.services.delegates.register.ApplicationBeanRegister;
-import br.com.ead.home.services.delegates.types.ServicePartitionType;
-import br.com.ead.home.services.delegates.types.ServiceStageType;
 import lombok.extern.log4j.Log4j2;
 
-import static br.com.ead.home.services.delegates.types.ServicePartitionType.FRANCE;
-import static br.com.ead.home.services.delegates.types.ServicePartitionType.SWEDEN;
-import static br.com.ead.home.services.delegates.types.ServiceStageType.UNIT_TEST;
+import static br.com.ead.home.common.types.PartitionType.FRANCE;
+import static br.com.ead.home.common.types.PartitionType.SWEDEN;
+import static br.com.ead.home.common.types.StageType.UNIT_TEST;
 
 @Log4j2
 public record BookablePreferencesServiceLookup(NamespaceResolver namespaceResolver) implements ServiceLookup<BookablePreferenceService> {
@@ -23,7 +23,7 @@ public record BookablePreferencesServiceLookup(NamespaceResolver namespaceResolv
     }
 
     @Override
-    public BookablePreferenceService getService(ServiceStageType stage, ServicePartitionType partition) {
+    public BookablePreferenceService getService(StageType stage, PartitionType partition) {
         BookablePreferenceService bean = (BookablePreferenceService) register.getBean(stage, partition, BookablePreferenceService.class.getName());
         log.debug("Looking up for bookable preference service. Using Stage %s and Partition %s bean".formatted(stage, partition));
         return bean;

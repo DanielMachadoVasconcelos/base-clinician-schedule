@@ -1,10 +1,10 @@
 package br.com.ead.home.services.delegates.register;
 
-import br.com.ead.home.services.api.Service;
+import br.com.ead.home.common.injectables.Service;
+import br.com.ead.home.common.types.PartitionType;
+import br.com.ead.home.common.types.StageType;
 import br.com.ead.home.services.delegates.namespace.EnvironmentNamespaceResolver;
 import br.com.ead.home.services.delegates.namespace.NamespaceResolver;
-import br.com.ead.home.services.delegates.types.ServicePartitionType;
-import br.com.ead.home.services.delegates.types.ServiceStageType;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
 
@@ -33,7 +33,7 @@ public final class ApplicationBeanRegister implements Register<Service> {
     }
 
     @Override
-    public Service getBean(ServiceStageType stage, ServicePartitionType partition, String beanClass) {
+    public Service getBean(StageType stage, PartitionType partition, String beanClass) {
         log.debug("Getting bean {} from stage {} and partition {}", beanClass, stage, partition);
         String namespace = namespaceResolver.resolve(stage, partition, beanClass);
         return Optional.ofNullable(BEAN_REGISTER.get(namespace))

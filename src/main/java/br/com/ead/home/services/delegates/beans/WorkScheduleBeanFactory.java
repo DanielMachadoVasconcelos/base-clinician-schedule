@@ -1,9 +1,9 @@
 package br.com.ead.home.services.delegates.beans;
 
-import br.com.ead.home.configurations.MockSystemClockProvider;
-import br.com.ead.home.repositories.MockClinicianWorkScheduleRepository;
-import br.com.ead.home.services.ClinicianWorkScheduleService;
-import br.com.ead.home.services.api.WorkScheduleService;
+import br.com.ead.home.configurations.system.MockSystemClockProvider;
+import br.com.ead.home.repositories.implementations.MockClinicianWorkScheduleRepository;
+import br.com.ead.home.services.WorkScheduleService;
+import br.com.ead.home.services.implementations.ClinicianWorkScheduleService;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2

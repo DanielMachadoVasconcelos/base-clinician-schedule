@@ -1,4 +1,4 @@
-package br.com.ead.home.configurations;
+package br.com.ead.home.configurations.system;
 
 import java.time.Clock;
 import java.time.Instant;

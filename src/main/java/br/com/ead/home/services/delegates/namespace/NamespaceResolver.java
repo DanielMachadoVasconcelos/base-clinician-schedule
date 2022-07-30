@@ -1,9 +1,9 @@
 package br.com.ead.home.services.delegates.namespace;
 
-import br.com.ead.home.services.delegates.types.ServicePartitionType;
-import br.com.ead.home.services.delegates.types.ServiceStageType;
+import br.com.ead.home.common.types.PartitionType;
+import br.com.ead.home.common.types.StageType;
 
 public interface NamespaceResolver {
 
-    String resolve(ServiceStageType stageType, ServicePartitionType partitionType, String serviceName);
+    String resolve(StageType stageType, PartitionType partitionType, String serviceName);
 }

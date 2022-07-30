@@ -1,26 +1,26 @@
 package br.com.ead.home.configurations;
 
-import br.com.ead.home.services.delegates.types.ServicePartitionType;
-import br.com.ead.home.services.delegates.types.ServiceStageType;
+import br.com.ead.home.common.types.PartitionType;
+import br.com.ead.home.common.types.StageType;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
-public class Environment {
+public record Environment() {
 
-    public ServicePartitionType getPartition() {
+    public PartitionType getPartition() {
        return Optional.ofNullable(System.getenv("PARTITION"))
                 .filter(StringUtils::isNotBlank)
                 .map(StringUtils::upperCase)
-                .map(ServicePartitionType::valueOf)
-                .orElse(ServicePartitionType.SWEDEN);
+                .map(PartitionType::valueOf)
+                .orElse(PartitionType.SWEDEN);
     }
 
-    public ServiceStageType getStage() {
+    public StageType getStage() {
         return Optional.ofNullable(System.getenv("STAGE"))
                 .filter(StringUtils::isNotBlank)
                 .map(StringUtils::upperCase)
-                .map(ServiceStageType::valueOf)
-                .orElse(ServiceStageType.UNIT_TEST);
+                .map(StageType::valueOf)
+                .orElse(StageType.UNIT_TEST);
     }
 }

@@ -1,10 +1,10 @@
 package br.com.ead.home.services.delegates.lookups;
 
-import br.com.ead.home.services.api.Service;
-import br.com.ead.home.services.delegates.types.ServicePartitionType;
-import br.com.ead.home.services.delegates.types.ServiceStageType;
+import br.com.ead.home.common.injectables.Service;
+import br.com.ead.home.common.types.PartitionType;
+import br.com.ead.home.common.types.StageType;
 
 public interface ServiceLookup<T extends Service> {
 
-    T getService(ServiceStageType stage, ServicePartitionType partition);
+    T getService(StageType stage, PartitionType partition);
 }

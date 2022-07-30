@@ -1,9 +1,9 @@
 package br.com.ead.home.services.delegates.factories;
 
 import br.com.ead.home.configurations.Environment;
-import br.com.ead.home.services.api.BookablePreferenceService;
-import br.com.ead.home.services.api.ScheduleService;
-import br.com.ead.home.services.api.WorkScheduleService;
+import br.com.ead.home.services.BookablePreferenceService;
+import br.com.ead.home.services.ScheduleService;
+import br.com.ead.home.services.WorkScheduleService;
 
 public final class ApplicationDelegateFactory {
 

@@ -1,10 +1,11 @@
-package br.com.ead.home.repositories;
+package br.com.ead.home.repositories.implementations;
 
-import br.com.ead.home.configurations.ClockProvider;
+import br.com.ead.home.configurations.system.ClockProvider;
 import br.com.ead.home.models.Shift;
 import br.com.ead.home.models.Slot;
 import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
+import br.com.ead.home.repositories.ShiftRepository;
 import lombok.extern.log4j.Log4j2;
 
 import java.time.ZonedDateTime;
