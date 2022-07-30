@@ -1,12 +1,12 @@
 package br.com.ead.home.services.delegates;
 
+import br.com.ead.home.common.namespace.EnvironmentNamespaceResolver;
 import br.com.ead.home.common.types.PartitionType;
 import br.com.ead.home.common.types.StageType;
 import br.com.ead.home.models.Shift;
 import br.com.ead.home.models.primitives.ClinicianId;
 import br.com.ead.home.services.WorkScheduleService;
 import br.com.ead.home.services.delegates.lookups.WorkScheduleServiceLookup;
-import br.com.ead.home.services.delegates.namespace.EnvironmentNamespaceResolver;
 
 import java.util.Set;
 
@@ -16,11 +16,11 @@ public record WorkScheduleDelegate(StageType stage, PartitionType partition) imp
 
     @Override
     public Set<Shift> findAllByClinicianId(ClinicianId clinicianId) {
-        return lookup.getService(stage, partition).findAllByClinicianId(clinicianId);
+        return lookup.lookup(stage, partition).findAllByClinicianId(clinicianId);
     }
 
     @Override
     public Set<Shift> findAllShifts() {
-        return lookup.getService(stage, partition).findAllShifts();
+        return lookup.lookup(stage, partition).findAllShifts();
     }
 }

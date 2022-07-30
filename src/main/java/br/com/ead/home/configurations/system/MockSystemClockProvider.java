@@ -7,7 +7,7 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-public class MockSystemClockProvider implements ClockProvider {
+public record MockSystemClockProvider() implements ClockProvider {
 
     @Override
     public Clock currentSystemClock() {

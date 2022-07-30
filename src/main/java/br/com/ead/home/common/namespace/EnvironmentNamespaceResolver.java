@@ -1,4 +1,4 @@
-package br.com.ead.home.services.delegates.namespace;
+package br.com.ead.home.common.namespace;
 
 import br.com.ead.home.common.types.PartitionType;
 import br.com.ead.home.common.types.StageType;
@@ -8,7 +8,7 @@ import java.util.Locale;
 
 public class EnvironmentNamespaceResolver implements NamespaceResolver {
 
-    private static final String DEFAULT_CONTEXT = "/context/beans/%s/%s/%s";
+    private static final String DEFAULT_CONTEXT = "java:beans/stage/%s/partition/%s/%s";
 
     @Override
     public String resolve(StageType stageType, PartitionType partitionType, String beanName) {

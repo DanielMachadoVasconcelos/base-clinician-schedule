@@ -1,10 +1,10 @@
 package br.com.ead.home.services.delegates.register;
 
 import br.com.ead.home.common.injectables.Service;
+import br.com.ead.home.common.namespace.EnvironmentNamespaceResolver;
+import br.com.ead.home.common.namespace.NamespaceResolver;
 import br.com.ead.home.common.types.PartitionType;
 import br.com.ead.home.common.types.StageType;
-import br.com.ead.home.services.delegates.namespace.EnvironmentNamespaceResolver;
-import br.com.ead.home.services.delegates.namespace.NamespaceResolver;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
 
