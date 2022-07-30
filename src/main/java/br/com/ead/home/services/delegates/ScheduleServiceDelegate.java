@@ -1,28 +1,29 @@
 package br.com.ead.home.services.delegates;
 
-import br.com.ead.home.common.namespace.EnvironmentNamespaceResolver;
-import br.com.ead.home.common.types.PartitionType;
-import br.com.ead.home.common.types.StageType;
+import br.com.ead.home.common.lookups.Lookup;
 import br.com.ead.home.models.Appointment;
 import br.com.ead.home.models.primitives.ClinicianId;
 import br.com.ead.home.services.ScheduleService;
-import br.com.ead.home.services.delegates.lookups.ScheduleServiceLookup;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.Set;
 
 @Log4j2
-public record ScheduleServiceDelegate(StageType stage, PartitionType partition) implements ScheduleService {
+public class ScheduleServiceDelegate implements ScheduleService {
 
-    private static final ScheduleServiceLookup lookup = new ScheduleServiceLookup(new EnvironmentNamespaceResolver());
+    private final Lookup<ScheduleService> lookup;
+
+    public ScheduleServiceDelegate(Lookup<ScheduleService> lookup) {
+        this.lookup = lookup;
+    }
 
     @Override
     public Set<Appointment> findAllByClinicianId(ClinicianId clinicianId) {
-        return lookup.lookup(stage, partition).findAllByClinicianId(clinicianId);
+        return lookup.lookup().findAllByClinicianId(clinicianId);
     }
 
     @Override
     public Set<Appointment> findAllAppointments() {
-        return lookup.lookup(stage, partition).findAllAppointments();
+        return lookup.lookup().findAllAppointments();
     }
 }

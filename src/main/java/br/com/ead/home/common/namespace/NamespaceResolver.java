@@ -5,5 +5,5 @@ import br.com.ead.home.common.types.StageType;
 
 public interface NamespaceResolver {
 
-    String resolve(StageType stageType, PartitionType partitionType, String serviceName);
+    String namespace(StageType stageType, PartitionType partitionType, String serviceName);
 }

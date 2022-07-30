@@ -1,31 +1,31 @@
 package br.com.ead.home.services.delegates.lookups;
 
+import br.com.ead.home.common.context.InitialContext;
 import br.com.ead.home.common.lookups.InMemoryLookup;
 import br.com.ead.home.common.namespace.NamespaceResolver;
 import br.com.ead.home.common.types.PartitionType;
 import br.com.ead.home.common.types.StageType;
+import br.com.ead.home.configurations.Environment;
 import br.com.ead.home.services.WorkScheduleService;
-import br.com.ead.home.services.delegates.beans.WorkScheduleBeanFactory;
-import br.com.ead.home.services.delegates.register.ApplicationBeanRegister;
 import lombok.extern.log4j.Log4j2;
 
-import static br.com.ead.home.common.types.PartitionType.FRANCE;
-import static br.com.ead.home.common.types.PartitionType.SWEDEN;
-import static br.com.ead.home.common.types.StageType.UNIT_TEST;
+import java.util.Optional;
 
 @Log4j2
-public record WorkScheduleServiceLookup(NamespaceResolver namespaceResolver) implements InMemoryLookup<WorkScheduleService> {
+public record WorkScheduleServiceLookup(Environment environment,
+                                        InitialContext initialContext,
+                                        NamespaceResolver resolver) implements InMemoryLookup<WorkScheduleService> {
 
-    private static final ApplicationBeanRegister register = ApplicationBeanRegister.getInstance();
+    @Override
+    public WorkScheduleService lookup() {
+        StageType stage = environment.getStage();
+        PartitionType partition = environment.getPartition();
 
-    public WorkScheduleServiceLookup {
-        register.registerBean(namespaceResolver.resolve(UNIT_TEST, SWEDEN, WorkScheduleService.class.getName()), WorkScheduleBeanFactory::creatUnitTest);
-        register.registerBean(namespaceResolver.resolve(UNIT_TEST, FRANCE, WorkScheduleService.class.getName()), WorkScheduleBeanFactory::creatUnitTest);
-    }
+        String jndiName = resolver.namespace(stage, partition, WorkScheduleService.class.getName());
+        WorkScheduleService service = (WorkScheduleService) initialContext.lookup(jndiName);
 
-    public WorkScheduleService lookup(StageType stage, PartitionType partition) {
-        WorkScheduleService bean = (WorkScheduleService) register.getBean(stage, partition, WorkScheduleService.class.getName());
         log.debug("Looking up for work schedule service. Using Stage %s and Partition %s bean".formatted(stage, partition));
-        return bean;
+        return Optional.ofNullable(service)
+                .orElseThrow(() -> new IllegalStateException("No bean register in context for jndiName '%s' ".formatted(jndiName)));
     }
 }

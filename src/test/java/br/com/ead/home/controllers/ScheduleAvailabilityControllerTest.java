@@ -1,31 +1,27 @@
 package br.com.ead.home.controllers;
 
-import br.com.ead.home.configurations.system.ClockProvider;
-import br.com.ead.home.configurations.system.MockSystemClockProvider;
+import br.com.ead.home.AbstractIntegrationTest;
+import br.com.ead.home.common.types.PartitionType;
+import br.com.ead.home.common.types.StageType;
 import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
-import br.com.ead.home.services.BookablePreferenceService;
-import br.com.ead.home.services.ScheduleAvailabilityService;
-import br.com.ead.home.services.ScheduleService;
-import br.com.ead.home.services.WorkScheduleService;
-import br.com.ead.home.services.delegates.factories.ApplicationDelegateFactory;
-import br.com.ead.home.services.implementations.AvailabilityService;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
 
-class ScheduleAvailabilityControllerTest {
+class ScheduleAvailabilityControllerTest extends AbstractIntegrationTest {
 
-    private ScheduleService scheduleService = ApplicationDelegateFactory.scheduleService();
-    private WorkScheduleService shiftService = ApplicationDelegateFactory.workScheduleService();
-    private BookablePreferenceService clinicianPreferencesService = ApplicationDelegateFactory.bookablePreferenceService();
+    private ScheduleAvailabilityController classUnderTest;
 
-    private ScheduleAvailabilityService availabilityService = new AvailabilityService(scheduleService, shiftService, clinicianPreferencesService);
-    private ScheduleAvailabilityController classUnderTest = new ScheduleAvailabilityController(availabilityService);
-    private ClockProvider clockProvider = new MockSystemClockProvider();
+    @BeforeEach
+    void setUp() {
+        String jndi = resolver.namespace(StageType.UNIT_TEST, PartitionType.SWEDEN, ScheduleAvailabilityController.class.getName());
+        classUnderTest = (ScheduleAvailabilityController) initialContext.lookup(jndi);
+    }
 
     @Test
     @DisplayName("Should find all bookable availabilities when requesting by clinicianId")
