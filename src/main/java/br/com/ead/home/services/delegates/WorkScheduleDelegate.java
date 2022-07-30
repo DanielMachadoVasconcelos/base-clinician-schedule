@@ -1,26 +1,27 @@
 package br.com.ead.home.services.delegates;
 
+import br.com.ead.home.common.lookups.Lookup;
 import br.com.ead.home.models.Shift;
 import br.com.ead.home.models.primitives.ClinicianId;
-import br.com.ead.home.services.api.WorkScheduleService;
-import br.com.ead.home.services.delegates.lookups.WorkScheduleServiceLookup;
-import br.com.ead.home.services.delegates.namespace.EnvironmentNamespaceResolver;
-import br.com.ead.home.services.delegates.types.ServicePartitionType;
-import br.com.ead.home.services.delegates.types.ServiceStageType;
+import br.com.ead.home.services.WorkScheduleService;
 
 import java.util.Set;
 
-public record WorkScheduleDelegate(ServiceStageType stage, ServicePartitionType partition) implements WorkScheduleService {
+public class WorkScheduleDelegate implements WorkScheduleService {
 
-    private static final WorkScheduleServiceLookup lookup = new WorkScheduleServiceLookup(new EnvironmentNamespaceResolver());
+    private final Lookup<WorkScheduleService> lookup;
+
+    public WorkScheduleDelegate(Lookup<WorkScheduleService> lookup) {
+        this.lookup = lookup;
+    }
 
     @Override
     public Set<Shift> findAllByClinicianId(ClinicianId clinicianId) {
-        return lookup.getService(stage, partition).findAllByClinicianId(clinicianId);
+        return lookup.lookup().findAllByClinicianId(clinicianId);
     }
 
     @Override
     public Set<Shift> findAllShifts() {
-        return lookup.getService(stage, partition).findAllShifts();
+        return lookup.lookup().findAllShifts();
     }
 }

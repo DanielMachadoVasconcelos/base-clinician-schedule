@@ -1,29 +1,31 @@
 package br.com.ead.home.services.delegates.factories;
 
 import br.com.ead.home.configurations.Environment;
-import br.com.ead.home.services.api.BookablePreferenceService;
-import br.com.ead.home.services.api.ScheduleService;
-import br.com.ead.home.services.api.WorkScheduleService;
+import br.com.ead.home.services.BookablePreferenceService;
+import br.com.ead.home.services.ScheduleService;
+import br.com.ead.home.services.WorkScheduleService;
+import br.com.ead.home.services.delegates.factories.producers.ServiceDelegateProducer;
 
 public final class ApplicationDelegateFactory {
 
-    private ApplicationDelegateFactory() {
+    private final Environment environment;
+
+    public ApplicationDelegateFactory(Environment environment) {
+        this.environment = environment;
     }
 
-    private static final Environment environment = new Environment();
-    private static final ScheduleServiceDelegateFactory scheduleService = new ScheduleServiceDelegateFactory(environment);
-    private static final WorkScheduleServiceDelegateFactory shiftService = new WorkScheduleServiceDelegateFactory(environment);
-    private static final BookablePreferenceServiceDelegateFactory clinicianPreferencesService = new BookablePreferenceServiceDelegateFactory(environment);
-
-    public static ScheduleService scheduleService() {
-        return scheduleService.createScheduleService();
+    public ScheduleService scheduleService() {
+        return (ScheduleService) ServiceDelegateProducer.getFactory(ScheduleService.class)
+                            .getService(environment);
     }
 
-    public static WorkScheduleService workScheduleService() {
-        return shiftService.createWorkScheduleService();
+    public WorkScheduleService workScheduleService() {
+        return (WorkScheduleService) ServiceDelegateProducer.getFactory(WorkScheduleService.class)
+                .getService(environment);
     }
 
-    public static BookablePreferenceService bookablePreferenceService() {
-        return clinicianPreferencesService.createBookablePreferenceService();
+    public BookablePreferenceService bookablePreferenceService() {
+        return (BookablePreferenceService) ServiceDelegateProducer.getFactory(BookablePreferenceService.class)
+                .getService(environment);
     }
 }

@@ -1,30 +1,32 @@
 package br.com.ead.home.services.delegates.lookups;
 
-import br.com.ead.home.services.api.ScheduleService;
-import br.com.ead.home.services.delegates.beans.ScheduleBeanFactory;
-import br.com.ead.home.services.delegates.namespace.NamespaceResolver;
-import br.com.ead.home.services.delegates.register.ApplicationBeanRegister;
-import br.com.ead.home.services.delegates.types.ServicePartitionType;
-import br.com.ead.home.services.delegates.types.ServiceStageType;
+import br.com.ead.home.common.context.InitialContext;
+import br.com.ead.home.common.lookups.InMemoryLookup;
+import br.com.ead.home.common.namespace.NamespaceResolver;
+import br.com.ead.home.common.types.PartitionType;
+import br.com.ead.home.common.types.StageType;
+import br.com.ead.home.configurations.Environment;
+import br.com.ead.home.services.ScheduleService;
 import lombok.extern.log4j.Log4j2;
 
-import static br.com.ead.home.services.delegates.types.ServicePartitionType.FRANCE;
-import static br.com.ead.home.services.delegates.types.ServicePartitionType.SWEDEN;
-import static br.com.ead.home.services.delegates.types.ServiceStageType.UNIT_TEST;
+import java.util.Optional;
 
 @Log4j2
-public record ScheduleServiceLookup(NamespaceResolver namespaceResolver) implements ServiceLookup<ScheduleService> {
+public record ScheduleServiceLookup(
+        Environment environment,
+        InitialContext initialContext,
+        NamespaceResolver resolver
+) implements InMemoryLookup<ScheduleService> {
 
-    private static final ApplicationBeanRegister register = ApplicationBeanRegister.getInstance();
+    @Override
+    public ScheduleService lookup() {
+        StageType stage = environment.getStage();
+        PartitionType partition = environment.getPartition();
 
-    public ScheduleServiceLookup {
-        register.registerBean(namespaceResolver.resolve(UNIT_TEST, SWEDEN, ScheduleService.class.getName()), ScheduleBeanFactory::creatUnitTest);
-        register.registerBean(namespaceResolver.resolve(UNIT_TEST, FRANCE, ScheduleService.class.getName()), ScheduleBeanFactory::creatUnitTest);
-    }
-
-    public ScheduleService getService(ServiceStageType stage, ServicePartitionType partition) {
-        ScheduleService bean = (ScheduleService) register.getBean(stage, partition, ScheduleService.class.getName());
-        log.debug("Looking up for work schedule service. Using Stage %s and Partition %s bean".formatted(stage, partition));
-        return bean;
+        String jndiName = resolver.namespace(stage, partition, ScheduleService.class.getName());
+        ScheduleService service = (ScheduleService) initialContext.lookup(jndiName);
+        log.debug("Looking up for sSchedule service. Using Stage %s and Partition %s bean".formatted(stage, partition));
+        return Optional.ofNullable(service)
+        .orElseThrow(() -> new IllegalStateException("No bean register in context for class '%s' ".formatted(ScheduleService.class.getName())));
     }
 }

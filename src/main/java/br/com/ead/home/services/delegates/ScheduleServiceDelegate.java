@@ -1,28 +1,34 @@
 package br.com.ead.home.services.delegates;
 
+import br.com.ead.home.common.lookups.Lookup;
 import br.com.ead.home.models.Appointment;
 import br.com.ead.home.models.primitives.ClinicianId;
-import br.com.ead.home.services.api.ScheduleService;
-import br.com.ead.home.services.delegates.lookups.ScheduleServiceLookup;
-import br.com.ead.home.services.delegates.namespace.EnvironmentNamespaceResolver;
-import br.com.ead.home.services.delegates.types.ServicePartitionType;
-import br.com.ead.home.services.delegates.types.ServiceStageType;
+import br.com.ead.home.services.ScheduleService;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.Set;
 
 @Log4j2
-public record ScheduleServiceDelegate(ServiceStageType stage, ServicePartitionType partition) implements ScheduleService {
+public class ScheduleServiceDelegate implements ScheduleService {
 
-    private static final ScheduleServiceLookup lookup = new ScheduleServiceLookup(new EnvironmentNamespaceResolver());
+    private final Lookup<ScheduleService> lookup;
+
+    public ScheduleServiceDelegate(Lookup<ScheduleService> lookup) {
+        this.lookup = lookup;
+    }
 
     @Override
     public Set<Appointment> findAllByClinicianId(ClinicianId clinicianId) {
-        return lookup.getService(stage, partition).findAllByClinicianId(clinicianId);
+        return lookup.lookup().findAllByClinicianId(clinicianId);
     }
 
     @Override
     public Set<Appointment> findAllAppointments() {
-        return lookup.getService(stage, partition).findAllAppointments();
+        return lookup.lookup().findAllAppointments();
+    }
+
+    @Override
+    public Appointment bookAppointment(Appointment appointment) {
+        return lookup.lookup().bookAppointment(appointment);
     }
 }
