@@ -1,5 +1,7 @@
 package br.com.ead.home.configurations;
 
+import br.com.ead.home.common.injectors.Component;
+
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -7,7 +9,7 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-public class MockSystemClockProvider implements ClockProvider {
+public class MockSystemClockProvider implements ClockProvider, Component {
 
     @Override
     public Clock currentSystemClock() {

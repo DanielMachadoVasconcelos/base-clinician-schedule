@@ -1,15 +1,15 @@
 package br.com.ead.home.controllers;
 
+import br.com.ead.home.common.ServiceLocator;
 import br.com.ead.home.configurations.ClockProvider;
 import br.com.ead.home.configurations.MockSystemClockProvider;
 import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
-import br.com.ead.home.services.AvailabilityService;
-import br.com.ead.home.services.api.BookablePreferenceService;
-import br.com.ead.home.services.api.ScheduleAvailabilityService;
-import br.com.ead.home.services.api.ScheduleService;
-import br.com.ead.home.services.api.WorkScheduleService;
-import br.com.ead.home.services.delegates.factories.ApplicationDelegateFactory;
+import br.com.ead.home.services.BookablePreferenceService;
+import br.com.ead.home.services.ScheduleAvailabilityService;
+import br.com.ead.home.services.ScheduleService;
+import br.com.ead.home.services.WorkScheduleService;
+import br.com.ead.home.services.implementations.AvailabilityService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,13 +19,14 @@ import java.util.Set;
 
 class ScheduleAvailabilityControllerTest {
 
-    private ScheduleService scheduleService = ApplicationDelegateFactory.scheduleService();
-    private WorkScheduleService shiftService = ApplicationDelegateFactory.workScheduleService();
-    private BookablePreferenceService clinicianPreferencesService = ApplicationDelegateFactory.bookablePreferenceService();
+    private ClockProvider clockProvider = new MockSystemClockProvider();
+
+    private ScheduleService scheduleService = ServiceLocator.getBean(ScheduleService.class);
+    private WorkScheduleService shiftService = ServiceLocator.getBean(WorkScheduleService.class);
+    private BookablePreferenceService clinicianPreferencesService = ServiceLocator.getBean(BookablePreferenceService.class);
 
     private ScheduleAvailabilityService availabilityService = new AvailabilityService(scheduleService, shiftService, clinicianPreferencesService);
     private ScheduleAvailabilityController classUnderTest = new ScheduleAvailabilityController(availabilityService);
-    private ClockProvider clockProvider = new MockSystemClockProvider();
 
     @Test
     @DisplayName("Should find all bookable availabilities when requesting by clinicianId")

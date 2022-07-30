@@ -1,16 +1,13 @@
 package br.com.ead.home.services.delegates.lookups;
 
-import br.com.ead.home.services.api.BookablePreferenceService;
-import br.com.ead.home.services.delegates.beans.BookablePreferencesServiceBeanFactory;
-import br.com.ead.home.services.delegates.namespace.NamespaceResolver;
-import br.com.ead.home.services.delegates.register.ApplicationBeanRegister;
-import br.com.ead.home.services.delegates.types.ServicePartitionType;
-import br.com.ead.home.services.delegates.types.ServiceStageType;
+import br.com.ead.home.common.lookups.ServiceLookup;
+import br.com.ead.home.common.namespace.NamespaceResolver;
+import br.com.ead.home.common.register.ApplicationBeanRegister;
+import br.com.ead.home.services.BookablePreferenceService;
+import br.com.ead.home.services.delegates.factories.BookablePreferencesServiceBeanFactory;
+import br.com.ead.home.types.ServicePartitionType;
+import br.com.ead.home.types.ServiceStageType;
 import lombok.extern.log4j.Log4j2;
-
-import static br.com.ead.home.services.delegates.types.ServicePartitionType.FRANCE;
-import static br.com.ead.home.services.delegates.types.ServicePartitionType.SWEDEN;
-import static br.com.ead.home.services.delegates.types.ServiceStageType.UNIT_TEST;
 
 @Log4j2
 public record BookablePreferencesServiceLookup(NamespaceResolver namespaceResolver) implements ServiceLookup<BookablePreferenceService> {
@@ -18,8 +15,12 @@ public record BookablePreferencesServiceLookup(NamespaceResolver namespaceResolv
     private static final ApplicationBeanRegister register = ApplicationBeanRegister.getInstance();
 
     public BookablePreferencesServiceLookup {
-        register.registerBean(namespaceResolver.resolve(UNIT_TEST, SWEDEN, BookablePreferenceService.class.getName()), BookablePreferencesServiceBeanFactory::creatUnitTest);
-        register.registerBean(namespaceResolver.resolve(UNIT_TEST, FRANCE, BookablePreferenceService.class.getName()), BookablePreferencesServiceBeanFactory::creatUnitTest);
+        for (ServiceStageType stage: ServiceStageType.values()){
+            for (ServicePartitionType partition: ServicePartitionType.values()){
+                String namespace = namespaceResolver.resolve(stage, partition, BookablePreferenceService.class.getName());
+                register.registerBean(namespace, BookablePreferencesServiceBeanFactory::creatUnitTest);
+            }
+        }
     }
 
     @Override

@@ -1,12 +1,12 @@
 package br.com.ead.home.services.delegates;
 
+import br.com.ead.home.common.namespace.EnvironmentNamespaceResolver;
 import br.com.ead.home.models.Shift;
 import br.com.ead.home.models.primitives.ClinicianId;
-import br.com.ead.home.services.api.WorkScheduleService;
+import br.com.ead.home.services.WorkScheduleService;
 import br.com.ead.home.services.delegates.lookups.WorkScheduleServiceLookup;
-import br.com.ead.home.services.delegates.namespace.EnvironmentNamespaceResolver;
-import br.com.ead.home.services.delegates.types.ServicePartitionType;
-import br.com.ead.home.services.delegates.types.ServiceStageType;
+import br.com.ead.home.types.ServicePartitionType;
+import br.com.ead.home.types.ServiceStageType;
 
 import java.util.Set;
 
