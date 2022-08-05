@@ -57,4 +57,55 @@ The following definitions represents the object universe of this project:
 > **_NOTE:_**  Those definitions can be updated at any time according to the need of the Domain.
 -------------
 
+### The Time Slot 
 
+As previously defined the time slot is a period of time that starts at a given date and time; and ends at a given date and time.
+This time period along the time flow is what define the ````Time Slot````. (A small portion of the time).
+
+See the representation below:
+```
+------------------------------------------------------------ time ---> 
+                     |------------------------| 
+            2022-01-01T15:00:00      2022-01-02T15:30:00
+```
+
+#### Overlapping
+
+The definition of a time slot overlap is a period of date and time, where two time slots have some parts that are the same.
+More formally, we can say that if the intersection of tow time slots is not an empty result.
+
+Since two (or more) time slots can overlap each other, it is important to define all the types of possible overlaps:
+
+
+##### Total Overlapping
+```
+This    |---------------------|
+Other   |---------------------|
+```
+##### No Overlapping
+```
+This                     |-------------|
+Other   |-------------|
+```
+##### Start within and ends after
+```
+This                 |------------------|
+Other   |------------------|
+```
+##### Start before and ends within
+```
+This   |------------------|
+Other                 |------------------|
+```
+
+All ```Overlap Possibility's``` are defined as such:
+```java
+public enum OverlapPossibility {
+  EQUALS,                     // Starts and ends at the same time as other
+  CONTAINS,                   // Other is completely within this
+  IS_CONTAINED,               // This is completely within other
+  STARTS_BEFORE_ENDS_WITHIN,  // This starts before other and ends within it
+  STARTS_WITHIN_ENDS_AFTER,   // This starts within other and ends after it
+  NO_OVERLAP                  // This does not overlap other
+}
+```
