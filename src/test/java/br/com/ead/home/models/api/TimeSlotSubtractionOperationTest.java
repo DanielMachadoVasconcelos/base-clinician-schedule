@@ -57,6 +57,22 @@ class TimeSlotSubtractionOperationTest {
     TimeSlot expectedSecondTimeSlot = new Slot(time("09:15"), time("10:00"));
     Assertions.assertNotNull(IterableUtils.find(result, expectedFirstTimeSlot::equals));
     Assertions.assertNotNull(IterableUtils.find(result, expectedSecondTimeSlot::equals));
+  }
 
+  @Test
+  @DisplayName("Should return two time slots when this is contained in the other")
+  void shouldReturnTwsTimeSlotWhenFirstIsInBetweenTheSecondTimeSlot() {
+    TimeSlot first = new Slot(time("08:45"), time("09:15"));
+    TimeSlot second = new Slot(time("08:00"), time("10:00"));
+
+    Set<TimeSlot> result = first.subtract(second);
+
+    Assertions.assertFalse(result.isEmpty());
+    Assertions.assertEquals(2, result.size());
+
+    TimeSlot expectedFirstTimeSlot = new Slot(time("08:00"), time("08:45"));
+    TimeSlot expectedSecondTimeSlot = new Slot(time("09:15"), time("10:00"));
+    Assertions.assertNotNull(IterableUtils.find(result, expectedFirstTimeSlot::equals));
+    Assertions.assertNotNull(IterableUtils.find(result, expectedSecondTimeSlot::equals));
   }
 }
