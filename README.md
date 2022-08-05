@@ -109,3 +109,89 @@ public enum OverlapPossibility {
   NO_OVERLAP                  // This does not overlap other
 }
 ```
+
+### Time Slot Operations
+
+Time slots can perform operations between each other. Like Sum, Subtractions, Union, Intersections, etc. 
+Here is a list of Time Slot Operations you can have by default:
+
+#### Summing two Time Slots
+
+This operation can also be read as an **union** of two time slots
+
+
+This Time Slot + Other Time Slot (```EQUALS```)
+```
+This    |------------------|
+Other   |------------------|
+Result: |------------------|
+```
+This Time Slot + Other Time Slot (```CONTAINS``` and ```IS_CONTAINED```)
+```
+This    |------------------|
+Other       |----------|
+Result: |------------------|
+```
+```
+This       |----------|
+Other   |------------------|
+Result: |------------------|
+```
+This Time Slot + Other Time Slot (```STARTS_BEFORE_ENDS_WITHIN```)
+```
+This    |------------------|
+Other                  |------------------|
+Result: |---------------------------------|
+```
+This Time Slot + Other Time Slot (```STARTS_WITHIN_ENDS_AFTER```)
+```
+This                  |------------------|
+Other   |------------------|
+Result: |--------------------------------|
+```
+This Time Slot + Other Time Slot (```NO_OVERLAP```)
+```
+This                        |-----------|
+Other   |-----------|
+Result: |-----------|       |-----------|
+```
+
+#### Subtracting two Time Slots
+
+This operation can also be read as an **disjunction** of two time slots
+
+This Time Slot - Other Time Slot (```EQUALS```)
+```
+This    |------------------|
+Other   |------------------|
+Result:  
+```
+This Time Slot - Other Time Slot (```CONTAINS``` and ```IS_CONTAINED```)
+```
+This    |-----------------------|
+Other       |-------|
+Result: |---|        |----------|
+```
+```
+This           |-------|
+Other   |-----------------------|
+Result: |------|        |-------|
+```
+This Time Slot - Other Time Slot (```STARTS_BEFORE_ENDS_WITHIN```)
+```
+This    |------------------|
+Other                  |------------------|
+Result: |--------------|   
+```
+This Time Slot - Other Time Slot (```STARTS_WITHIN_ENDS_AFTER```)
+```
+This                  |------------------|
+Other   |------------------|
+Result:                    |-------------|
+```
+This Time Slot - Other Time Slot (```NO_OVERLAP```)
+```
+This                        |-----------|
+Other   |-----------|
+Result: |-----------|       |-----------|
+```
