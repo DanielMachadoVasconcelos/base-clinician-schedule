@@ -7,6 +7,7 @@ import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
 import br.com.ead.home.models.primitives.PatientId;
 import br.com.ead.home.repositories.AppointmentRepository;
+import com.google.common.collect.Sets;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.RandomUtils;
 
@@ -49,12 +50,12 @@ public class MockAppointmentRepository implements AppointmentRepository {
     @Override
     public Appointment bookAppointment(Appointment appointment) {
         if(database.containsKey(appointment.clinicianId())) {
-            Set<Appointment> appointments = database.getOrDefault(appointment.clinicianId(), Set.of());
+            Set<Appointment> appointments = database.getOrDefault(appointment.clinicianId(), Sets.newHashSet());
             appointments.add(appointment);
             database.put(appointment.clinicianId(), appointments);
             return appointment;
         }
-        database.put(appointment.clinicianId(), Set.of(appointment));
+        database.put(appointment.clinicianId(), Sets.newHashSet(appointment));
         return appointment;
     }
 

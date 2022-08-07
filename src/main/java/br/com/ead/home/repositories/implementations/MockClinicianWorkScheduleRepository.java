@@ -6,6 +6,7 @@ import br.com.ead.home.models.Slot;
 import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
 import br.com.ead.home.repositories.ShiftRepository;
+import com.google.common.collect.Sets;
 import lombok.extern.log4j.Log4j2;
 
 import java.time.ZonedDateTime;
@@ -47,12 +48,12 @@ public class MockClinicianWorkScheduleRepository implements ShiftRepository {
     @Override
     public Shift scheduleShift(Shift shift) {
         if(database.containsKey(shift.clinicianId())) {
-            Set<Shift> shifts = database.getOrDefault(shift.clinicianId(), Set.of());
+            Set<Shift> shifts = database.getOrDefault(shift.clinicianId(), Sets.newHashSet());
             shifts.add(shift);
             database.put(shift.clinicianId(), shifts);
             return shift;
         }
-        database.put(shift.clinicianId(), Set.of(shift));
+        database.put(shift.clinicianId(), Sets.newHashSet(shift));
         return shift;
     }
 
