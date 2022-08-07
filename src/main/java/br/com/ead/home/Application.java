@@ -15,7 +15,6 @@ import br.com.ead.home.controllers.AppointmentController;
 import br.com.ead.home.controllers.ScheduleAvailabilityController;
 import br.com.ead.home.controllers.ShiftController;
 import br.com.ead.home.models.Appointment;
-import br.com.ead.home.models.Shift;
 import br.com.ead.home.models.Slot;
 import br.com.ead.home.models.api.TimeSlot;
 import br.com.ead.home.models.primitives.ClinicianId;
@@ -24,7 +23,6 @@ import lombok.extern.log4j.Log4j2;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.Set;
 
 @Log4j2
 public class Application {
@@ -52,11 +50,10 @@ public class Application {
         loader.init();
 
         TimeSlot timeSlot = Slot.from(today, Duration.ofHours(1));
+        AppointmentController controller = getAppointmentController();
 
         Appointment appointment = controller.createAppointment(clinicianId, patientId, timeSlot);
         log.info("New Appointment created: {}", appointment);
-
-        return appointment;
     }
 
     private static AppointmentController getAppointmentController() {
