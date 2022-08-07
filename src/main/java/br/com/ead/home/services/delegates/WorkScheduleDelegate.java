@@ -24,4 +24,9 @@ public class WorkScheduleDelegate implements WorkScheduleService {
     public Set<Shift> findAllShifts() {
         return lookup.lookup().findAllShifts();
     }
+
+    @Override
+    public Shift scheduleShift(Shift shift) {
+        return lookup.lookup().scheduleShift(shift);
+    }
 }

@@ -1,6 +1,7 @@
 package br.com.ead.home.common.loader;
 
 import br.com.ead.home.common.context.InitialContext;
+import br.com.ead.home.common.injectables.Bean;
 import br.com.ead.home.common.injectables.Repository;
 import br.com.ead.home.common.namespace.NamespaceResolver;
 import br.com.ead.home.common.types.PartitionType;
@@ -10,6 +11,7 @@ import br.com.ead.home.configurations.system.ClockProvider;
 import br.com.ead.home.configurations.system.MockSystemClockProvider;
 import br.com.ead.home.controllers.AppointmentController;
 import br.com.ead.home.controllers.ScheduleAvailabilityController;
+import br.com.ead.home.controllers.ShiftController;
 import br.com.ead.home.repositories.AppointmentRepository;
 import br.com.ead.home.repositories.ClinicianPreferencesRepository;
 import br.com.ead.home.repositories.ShiftRepository;
@@ -42,110 +44,48 @@ public record InMemoryBeanLoader(Environment environment,
         ClockProvider clockProvider = bindSystemClock();
 
         //Repositories
-        AppointmentRepository appointmentRepository = bindRepository(AppointmentRepository.class);
-        ClinicianPreferencesRepository clinicianPreferencesRepository = bindRepository(ClinicianPreferencesRepository.class);
-        ShiftRepository shiftRepository = bindRepository(ShiftRepository.class);
+        AppointmentRepository appointmentRepository = bindRepository(AppointmentRepository.class, clockProvider);
+        ClinicianPreferencesRepository clinicianPreferencesRepository = bindRepository(ClinicianPreferencesRepository.class, clockProvider);
+        ShiftRepository shiftRepository = bindRepository(ShiftRepository.class, clockProvider);
 
         // Services
-        ScheduleService scheduleService = bindAppointmentService(appointmentRepository);
-        BookablePreferenceService bookablePreferenceService = bindClinicianPreferencesService(clinicianPreferencesRepository);
-        WorkScheduleService workScheduleService = bindClinicianWorkScheduleService(shiftRepository);
-
+        ScheduleService scheduleService =
+                bindBean(new AppointmentService(appointmentRepository));
+        BookablePreferenceService bookablePreferenceService =
+                bindBean(new ClinicianPreferencesService(clinicianPreferencesRepository));
+        WorkScheduleService workScheduleService =
+                bindBean(new ClinicianWorkScheduleService(shiftRepository));
         ScheduleAvailabilityService scheduleAvailabilityService =
-                bindScheduleAvailabilityService(scheduleService, workScheduleService, bookablePreferenceService);
+                bindBean(new AvailabilityService(scheduleService, workScheduleService, bookablePreferenceService));
 
         // Controllers
-        AppointmentController appointmentController = bindAppointmentController(scheduleService);
+        ShiftController shiftController =
+                bindBean(new ShiftController(workScheduleService));
+        AppointmentController appointmentController =
+                bindBean(new AppointmentController(scheduleService));
         ScheduleAvailabilityController scheduleAvailabilityController =
-                bindScheduleAvailabilityController(scheduleAvailabilityService);
+                bindBean(new ScheduleAvailabilityController(scheduleAvailabilityService));
     }
 
-    private  ScheduleAvailabilityController bindScheduleAvailabilityController(ScheduleAvailabilityService service) {
+    private <T extends Bean> T bindBean(T bean) {
+        String jndi = getJndiName(bean.getClass().getName());
+        initialContext.bind(jndi, bean);
+        log.info("{} bind with the name: {}", bean.getClass().getName(), jndi);
+        return bean;
+    }
+
+    private String getJndiName(String beanName) {
+        StageType stage = environment.getStage();
+        PartitionType partition = environment.getPartition();
+        return resolver.namespace(stage, partition, beanName);
+    }
+
+    private  <T extends Repository> T bindRepository(Class<T> clazz, ClockProvider clockProvider) {
         StageType stage = environment.getStage();
         PartitionType partition = environment.getPartition();
 
-        ScheduleAvailabilityController controller = new ScheduleAvailabilityController(service);
-        String className = ScheduleAvailabilityController.class.getName();
-        String jndi = resolver.namespace(stage, partition, className);
-        initialContext.bind(jndi, controller);
-
-        log.info("{} bind with the name: {}", className, jndi);
-        return controller;
-    }
-
-    private  AppointmentController bindAppointmentController(ScheduleService service) {
-        StageType stage = environment.getStage();
-        PartitionType partition = environment.getPartition();
-
-        AppointmentController controller = new AppointmentController(service);
-        String className = AppointmentController.class.getName();
-        String jndi = resolver.namespace(stage, partition, className);
-        initialContext.bind(jndi, controller);
-
-        log.info("{} bind with the name: {}", className, jndi);
-        return controller;
-    }
-
-    private  ScheduleAvailabilityService bindScheduleAvailabilityService(ScheduleService scheduleService,
-                                                                               WorkScheduleService shiftService,
-                                                                               BookablePreferenceService clinicianPreferences) {
-        StageType stage = environment.getStage();
-        PartitionType partition = environment.getPartition();
-
-        ScheduleAvailabilityService service = new AvailabilityService(scheduleService, shiftService, clinicianPreferences);
-        String className = ScheduleAvailabilityService.class.getName();
-        String jndi = resolver.namespace(stage, partition, className);
-        initialContext.bind(jndi, service);
-
-        log.info("{} bind with the name: {}", className, jndi);
-        return service;
-    }
-
-    private  ScheduleService bindAppointmentService(AppointmentRepository repository) {
-        StageType stage = environment.getStage();
-        PartitionType partition = environment.getPartition();
-
-        ScheduleService service = new AppointmentService(repository);
-        String className = ScheduleService.class.getName();
-        String jndi = resolver.namespace(stage, partition, className);
-        initialContext.bind(jndi, service);
-
-        log.info("{} bind with the name: {}", className, jndi);
-        return service;
-    }
-
-    private  BookablePreferenceService bindClinicianPreferencesService(ClinicianPreferencesRepository repository) {
-        StageType stage = environment.getStage();
-        PartitionType partition = environment.getPartition();
-
-        BookablePreferenceService service = new ClinicianPreferencesService(repository);
-        String className = BookablePreferenceService.class.getName();
-        String jndi = resolver.namespace(stage, partition, className);
-        initialContext.bind(jndi, service);
-
-        log.info("{} bind with the name: {}", className, jndi);
-        return service;
-    }
-
-    private  WorkScheduleService bindClinicianWorkScheduleService(ShiftRepository repository) {
-        StageType stage = environment.getStage();
-        PartitionType partition = environment.getPartition();
-
-        WorkScheduleService service = new ClinicianWorkScheduleService(repository);
-        String className = WorkScheduleService.class.getName();
-        String jndi = resolver.namespace(stage, partition, className);
-        initialContext.bind(jndi, service);
-
-        log.info("{} bind with the name: {}", className, jndi);
-        return service;
-    }
-
-    private  <T extends Repository> T bindRepository(Class<T> clazz) {
-        StageType stage = environment.getStage();
-        PartitionType partition = environment.getPartition();
-
-        String jndiName = resolver.namespace(stage, partition, clazz.getName());
-        T repository = RepositoryProducer.getFactory(clazz).getRepository(stage, partition);
+        String jndiName = getJndiName(clazz.getName());
+        T repository = (T) RepositoryProducer.getFactory(clazz).getRepository(stage, partition).apply(clockProvider);
 
         initialContext.bind(jndiName, repository);
         log.info("{} bind with the name: {}", clazz.getName(), jndiName);
@@ -160,10 +100,10 @@ public record InMemoryBeanLoader(Environment environment,
         ClockProvider clockProvider = newClockProvider(stage);
 
         String className = ClockProvider.class.getName();
-        String jndi = resolver.namespace(stage, partition, className);
-        initialContext.bind(jndi, clockProvider);
+        String jndiName = getJndiName(className);
+        initialContext.bind(jndiName, clockProvider);
 
-        log.info("{} bind with the name: {}", className, jndi);
+        log.info("{} bind with the name: {}", className, jndiName);
 
         return clockProvider;
     }

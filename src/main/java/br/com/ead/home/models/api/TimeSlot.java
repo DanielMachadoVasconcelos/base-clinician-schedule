@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiFunction;
@@ -234,18 +235,7 @@ public interface TimeSlot extends Comparable<TimeSlot>, Cloneable, Serializable 
                 results.add(this.of(this.start(), other.start()));
                 results.add(this.of(other.end(), this.end()));
             }
-            case IS_CONTAINED -> {
-                if (other.start().equals(this.start())) {
-                    results.add(other.of(this.end(), other.end()));
-                    break;
-                }
-                if (other.end().equals(this.end())) {
-                    results.add(other.of(other.start(), this.start()));
-                    break;
-                }
-                results.add(other.of(other.start(), this.start()));
-                results.add(other.of(this.end(), other.end()));
-            }
+            case IS_CONTAINED -> List.of();
             case STARTS_BEFORE_ENDS_WITHIN -> results.add(this.of(this.start(), other.start()));
             case STARTS_WITHIN_ENDS_AFTER -> results.add(this.of(other.end(), this.end()));
             case EQUALS -> results.addAll(Set.of());

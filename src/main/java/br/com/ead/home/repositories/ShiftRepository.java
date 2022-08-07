@@ -11,4 +11,6 @@ public interface ShiftRepository extends Repository {
     Set<Shift> findAllByClinicianId(ClinicianId clinicianId);
 
     Set<Shift> findAllShifts();
+
+    Shift scheduleShift(Shift shift);
 }

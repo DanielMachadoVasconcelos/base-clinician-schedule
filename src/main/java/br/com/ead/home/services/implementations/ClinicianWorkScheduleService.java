@@ -16,4 +16,9 @@ public record ClinicianWorkScheduleService(ShiftRepository repository) implement
     public Set<Shift> findAllShifts(){
         return repository.findAllShifts();
     }
+
+    @Override
+    public Shift scheduleShift(Shift shift) {
+        return repository.scheduleShift(shift);
+    }
 }
