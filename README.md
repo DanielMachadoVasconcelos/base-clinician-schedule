@@ -18,7 +18,7 @@ The following definitions represents the object universe of this project:
 
 #### Time Slot
 
-```Time slot``` represents a period o time that contains a start and an end point in time.
+```Time slot``` represents a period that contains a start and an end point over a time frame.
 
 * It **must** have a Duration (```duration = endTime - startTime```) grater then zero;
 * The start time **must** be before the end date time;
@@ -72,7 +72,7 @@ The following definitions represents the object universe of this project:
 ### The Time Slot
 
 As previously defined the time slot is a period of time that starts at a given date and time; and ends at a given date
-and time. This time period along the time flow is what define the ````Time Slot````. (A small portion of the time).
+and time. This small portion of the time period over the infinite time flow is what define the ````Time Slot````.
 
 See the representation below:
 
@@ -132,7 +132,7 @@ public enum OverlapPossibility {
 
 ### Time Slot Operations
 
-<p> Time slots can perform operations between each other. Like Sum, Subtractions, Union, Intersections, etc.</p> 
+<p> Time slots can perform operations between each other. Like Sum, Subtract, Union, Intersections, etc.</p> 
 <p> Here is a list of Time Slot Operations you can have by default:</p>
 
 #### Summing two Time Slots
@@ -208,7 +208,7 @@ Result: |---|        |----------|
 ```
 This           |-------|
 Other   |-----------------------|
-Result: |------|        |-------|
+Result: 
 ```
 
 * This Time Slot - Other Time Slot (```STARTS_BEFORE_ENDS_WITHIN```)
@@ -288,7 +288,7 @@ This make sure that the next meeting can only be booked after a certain period o
 ```
      Current Hour of the day      
 --------------+-------------------------------- time ---> 
-Appointments: ***********************|---------| (Only possible to book the next meeting in 30M. So no surprise meetings)
+Appointments: ******* blocked *******|---------| (Only possible to book the next meeting in 30M)
 Shift:        |--------------------------------|
 ```
 #### Only the Maximum of Free Slots
@@ -297,6 +297,6 @@ This prevents the clinician schedule to be booked for the entire year (i.e 10, 1
      Current Hour of the day      
 --------------+-------------------------------- time --->
 Appointments: No appointment (Free Agenda) 
-Boobkable:   |----| |-----| |----| ***********  (Only the maximun of 3 times slots)
-Shift:       |--------------------------------|
+Boobkable:   |----| |-----| |----| **** blocked ****  (Only a maximun of 3 times slots)
+Shift:       |-------------------------------------|
 ```
