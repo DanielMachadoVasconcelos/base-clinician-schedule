@@ -25,25 +25,25 @@ public record Schedule(ClinicianId clinicianId, Set<Shift> shift, Set<Appointmen
             .flatMap(Set::stream)
             .collect(Collectors.toSet());
         log.debug("Got all Bookable Availabilities of size={} from Clinician={} Schedule",
-                bookable.size() ,clinicianId().value());
+                bookable.size() ,clinicianId().getValue());
         return bookable;
     }
 
     public static Schedule mergeByClinician(Schedule accumulator, Schedule next) {
         Preconditions.checkState(accumulator.clinicianId().equals(next.clinicianId()), "Clinician must be the same");
         log.debug("Merging into Schedule {} the Schedule from clinician={}",
-                accumulator.clinicianId().value(),
-                next.clinicianId().value());
+                accumulator.clinicianId().getValue(),
+                next.clinicianId().getValue());
 
         var shifts = Stream.concat(accumulator.shift().stream(), next.shift().stream()).collect(Collectors.toSet());
         log.debug("Merged all shifts from clinician={}. Accumulator size={}, Next size={}",
-                accumulator.clinicianId().value(),
+                accumulator.clinicianId().getValue(),
                 accumulator.shift().size(),
                 next.shift().size());
 
         var appointments = Stream.concat(accumulator.bookings().stream(), next.bookings().stream()).collect(Collectors.toSet());
         log.debug("Merged all Appointments from clinician={}. Accumulator size={}, Next size={}",
-                accumulator.clinicianId().value(),
+                accumulator.clinicianId().getValue(),
                 accumulator.bookings().size(),
                 next.bookings().size());
 

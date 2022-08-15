@@ -15,11 +15,16 @@ configurations {
 repositories {
     mavenCentral()
 }
+def versions = [
+        vertx: '4.3.2'
+]
 
 dependencies {
     implementation 'io.reactivex.rxjava3:rxjava:3.1.5'
-    implementation 'io.vertx:vertx-core:4.3.2'
-    implementation 'io.vertx:vertx-web:4.3.2'
+    implementation "io.vertx:vertx-core:${versions.vertx}"
+    implementation "io.vertx:vertx-web:${versions.vertx}"
+    implementation "io.vertx:vertx-circuit-breaker:${versions.vertx}"
+
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'

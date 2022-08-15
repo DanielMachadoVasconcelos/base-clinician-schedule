@@ -60,7 +60,7 @@ public class MockAppointmentRepository implements AppointmentRepository {
     }
 
     private Set<Appointment> createFakeAppointments(ClinicianId clinicianId) {
-        log.debug("Getting all Appointments in the database for clinician={}", clinicianId.value());
+        log.debug("Getting all Appointments in the database for clinician={}", clinicianId.getValue());
         ZonedDateTime seed = ZonedDateTime.now(clockProvider.currentSystemClock());
 
         Predicate<ZonedDateTime> hasNext = item -> seed.plusDays(180).isAfter(item);

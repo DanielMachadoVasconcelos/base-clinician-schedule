@@ -1,14 +1,23 @@
 package br.com.ead.home.models.primitives;
 
 import com.google.common.base.Preconditions;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Comparator;
 import java.util.UUID;
 
-public record ClinicianId(String value) implements Comparable<ClinicianId> {
+@Getter
+@ToString
+@NoArgsConstructor
+public final class ClinicianId implements Comparable<ClinicianId> {
 
-    public ClinicianId {
+    private String value;
+
+    public ClinicianId(String value) {
         Preconditions.checkNotNull(value, "Clinician identifier is mandatory");
+        this.value = value;
     }
 
     public static ClinicianId from(UUID uuid) {
@@ -18,6 +27,6 @@ public record ClinicianId(String value) implements Comparable<ClinicianId> {
 
     @Override
     public int compareTo(ClinicianId o) {
-        return Comparator.comparing(ClinicianId::value).compare(this, o);
+        return Comparator.comparing(ClinicianId::getValue).compare(this, o);
     }
 }
