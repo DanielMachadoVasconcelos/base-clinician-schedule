@@ -1,6 +1,7 @@
 package br.com.ead.home.models.primitives;
 
 import com.google.common.base.Preconditions;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -11,6 +12,7 @@ import java.util.UUID;
 @Getter
 @ToString
 @NoArgsConstructor
+@EqualsAndHashCode
 public final class PatientId implements Comparable<PatientId> {
 
     private String value;

@@ -33,9 +33,10 @@ public class AppointmentControllerTest extends AbstractIntegrationTest {
         ClinicianId clinicianId = new ClinicianId("Stevenson");
         PatientId patientId = new PatientId("Sara");
         TimeSlot timeSlot = Slot.from(ZonedDateTime.now(), Duration.ofHours(1));
+        Appointment request = new Appointment(clinicianId, patientId, timeSlot);
 
         // when:
-        Appointment appointment = classUnderTest.createAppointment(clinicianId, patientId, timeSlot);
+        Appointment appointment = classUnderTest.createAppointment(request);
 
         // then:
         Assertions.assertAll(
@@ -53,15 +54,16 @@ public class AppointmentControllerTest extends AbstractIntegrationTest {
         ClinicianId clinicianId = new ClinicianId("Bara");
         PatientId patientId = new PatientId("Sara");
         TimeSlot timeSlot = Slot.from(ZonedDateTime.now(), Duration.ofHours(1));
+        Appointment request = new Appointment(clinicianId, patientId, timeSlot);
 
         // and:
-        Appointment firstAppointment = classUnderTest.createAppointment(clinicianId, patientId, timeSlot);
+        Appointment firstAppointment = classUnderTest.createAppointment(request);
         Assertions.assertNotNull(firstAppointment);
 
         // when:
         PatientId anotherPatientId = new PatientId("Bruno");
         IllegalStateException validation = Assertions.assertThrows(IllegalStateException.class,
-                () -> classUnderTest.createAppointment(clinicianId, anotherPatientId, timeSlot));
+                () -> classUnderTest.createAppointment(request));
 
         // then:
         Assertions.assertEquals("Time slot overlap other appointment", validation.getMessage());

@@ -24,11 +24,12 @@ dependencies {
     implementation "io.vertx:vertx-core:${versions.vertx}"
     implementation "io.vertx:vertx-web:${versions.vertx}"
     implementation "io.vertx:vertx-circuit-breaker:${versions.vertx}"
-
+    implementation "io.vertx:vertx-web-validation:${versions.vertx}"
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
     implementation 'com.fasterxml.jackson.module:jackson-modules-java8:2.13.3'
+    implementation 'com.fasterxml.jackson.module:jackson-module-parameter-names:2.13.3'
 
     implementation 'com.google.guava:guava:31.1-jre'
 

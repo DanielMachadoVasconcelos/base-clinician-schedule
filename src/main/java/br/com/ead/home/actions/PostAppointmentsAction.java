@@ -8,17 +8,23 @@ import br.com.ead.home.common.namespace.NamespaceResolver;
 import br.com.ead.home.configurations.Environment;
 import br.com.ead.home.configurations.SystemEnvironmentVariables;
 import br.com.ead.home.controllers.AppointmentController;
-import br.com.ead.home.controllers.ScheduleAvailabilityController;
-import br.com.ead.home.controllers.ShiftController;
+import br.com.ead.home.models.Appointment;
 import br.com.ead.home.models.Slot;
 import br.com.ead.home.models.request.AppointmentRequest;
 import br.com.ead.home.models.responses.AppointmentResponse;
+import br.com.ead.home.services.exceptions.AppointmentException;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.reactivex.rxjava3.core.Single;
 import io.vertx.core.Handler;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.log4j.Log4j2;
+
+import java.util.stream.Collectors;
 
 @Log4j2
 public class PostAppointmentsAction implements Handler<RoutingContext> {
@@ -32,38 +38,52 @@ public class PostAppointmentsAction implements Handler<RoutingContext> {
         AppointmentController appointmentController = getAppointmentController();
         Single.fromSupplier(routingContext::body)
                 .map(body -> body.asPojo(AppointmentRequest.class))
-                .map(request -> appointmentController.createAppointment(request.getClinicianId(), request.getPatientId(), Slot.from(request.getStartAt(), request.getDuration())))
-                .map(appointment -> new AppointmentResponse(appointment.clinicianId(), appointment.patientId(), appointment.timeSlot().start(), appointment.timeSlot().length()))
-                .doOnError(error -> log.error("Something went wrong", error))
-                .doOnSuccess(response -> log.info("Appointment booked={}", response))
-                .subscribe(
-                        buffer -> routingContext.response()
-                                .putHeader("content-type", "application/json; charset=utf-8")
-                                .send(Json.encodePrettily(buffer)),
-                        error -> routingContext.response()
-                                .setStatusCode(500)
-                                .putHeader("content-type", "application/json; charset=utf-8")
-                                .end(new JsonObject()
-                                        .put("title", "Something went wrong! 🤔")
-                                        .put("message", error.getMessage())
-                                        .toBuffer()));
+                .map(request -> new Appointment(request.getClinicianId(), request.getPatientId(), Slot.from(request.getStartAt(), request.getDuration())))
+                .map(appointment -> appointmentController.createAppointment(appointment))
+                .map(AppointmentResponse::from)
+                .doOnError(error -> log.error("There was an error processing the request. It is possible the appointment was not created.", error))
+                .doOnSuccess(response -> log.info("Appointment successfully booked. Appointment={}", response))
+                .map(Json::encodePrettily)
+                .subscribe(response -> onSuccess(routingContext, response),
+                           error -> onError(routingContext, error));
+    }
+
+    private void onError(RoutingContext routingContext, Throwable error) {
+
+        int statusCode = HttpResponseStatus.INTERNAL_SERVER_ERROR.code();
+        Buffer body = new JsonObject()
+                .put("title", "Something went wrong! 🤔")
+                .put("message", error.getMessage())
+                .toBuffer();
+
+        if (error instanceof AppointmentException exception){
+            statusCode = HttpResponseStatus.BAD_REQUEST.code();
+            body = new JsonObject()
+                    .put("title", exception.getMessage())
+                    .put("validations", new JsonArray(exception.getErrorCodes().stream()
+                                                 .map(code -> new JsonObject()
+                                                                .put("field", code.getField())
+                                                                .put("message", code.getMessage()))
+                                                 .collect(Collectors.toList())))
+                    .toBuffer();
+        }
+
+        routingContext.response()
+                        .setStatusCode(statusCode)
+                        .putHeader(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=utf-8")
+                        .send(body);
+    }
+
+    public static void onSuccess(RoutingContext routingContext, String response) {
+       routingContext.response()
+                     .setStatusCode(HttpResponseStatus.CREATED.code())
+                     .putHeader(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=utf-8")
+                     .send(response);
     }
 
     private static AppointmentController getAppointmentController() {
         AppointmentController controller = getBean(AppointmentController.class);
         log.debug("AppointmentController successfully recovery from initial context");
-        return controller;
-    }
-
-    private static ShiftController getShiftController() {
-        ShiftController controller = getBean(ShiftController.class);
-        log.debug("ShiftController successfully recovery from initial context");
-        return controller;
-    }
-
-    private static ScheduleAvailabilityController getScheduleAvailabilityController() {
-        ScheduleAvailabilityController controller = getBean(ScheduleAvailabilityController.class);
-        log.debug("ScheduleAvailabilityController successfully recovery from initial context");
         return controller;
     }
 

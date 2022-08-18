@@ -1,9 +1,12 @@
 package br.com.ead.home.models.responses;
 
+import br.com.ead.home.models.Appointment;
 import br.com.ead.home.models.primitives.ClinicianId;
 import br.com.ead.home.models.primitives.PatientId;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.vertx.core.json.JsonObject;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.DurationDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.key.ZonedDateTimeKeyDeserializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,18 +18,28 @@ import java.time.ZonedDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper=true)
-public class AppointmentResponse extends JsonObject {
+@EqualsAndHashCode
+public class AppointmentResponse {
 
     @JsonProperty("clinician_id")
-    private ClinicianId clinicianId;
+    ClinicianId clinicianId;
 
     @JsonProperty("patient_id")
-    private PatientId patientId;
+    PatientId patientId;
 
     @JsonProperty("start_at")
-    private ZonedDateTime startAt;
+    @JsonDeserialize(keyAs = ZonedDateTimeKeyDeserializer.class)
+    ZonedDateTime startAt;
 
     @JsonProperty("duration")
-    private Duration duration;
+    @JsonDeserialize(contentAs = DurationDeserializer.class)
+    Duration duration;
+
+    public static AppointmentResponse from(Appointment appointment){
+        return new AppointmentResponse(
+                appointment.clinicianId(),
+                appointment.patientId(),
+                appointment.timeSlot().start(),
+                appointment.timeSlot().length());
+    }
 }
