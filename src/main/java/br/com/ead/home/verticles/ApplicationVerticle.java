@@ -8,7 +8,7 @@ public class ApplicationVerticle extends AbstractVerticle {
 
     @Override
     public void start() throws Exception {
-        vertx.deployVerticle(new ApplicationVersion())
+        vertx.deployVerticle(new ApplicationVersionVerticle())
              .compose(parameters -> vertx.deployVerticle(new BeanFactoryVerticle()))
              .compose(parameters -> vertx.deployVerticle(new JacksonMapperVerticle()))
              .compose(parameters -> vertx.deployVerticle(new HttpServerVerticle()))

@@ -1,5 +1,7 @@
 package br.com.ead.home.common.context;
 
+import br.com.ead.home.common.injectables.Bean;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,14 +17,14 @@ public final class InMemoryInitialContext implements InitialContext {
         return INSTANCE;
     }
 
-    private static final Map<String, Object> cache = new ConcurrentHashMap<>();
+    private static final Map<String, Bean> cache = new ConcurrentHashMap<>();
 
-    public void bind(String key, Object value) {
+    public void bind(String key, Bean value) {
         cache.put(key, value);
     }
 
-    public Object lookup(String key) {
-        return Optional.ofNullable(cache.get(key))
+    public <T extends Bean> T lookup(String key) {
+        return (T) Optional.ofNullable(cache.get(key))
                 .orElseThrow(() -> new IllegalStateException("No bean register for jndi name %s".formatted(key)));
     }
 }

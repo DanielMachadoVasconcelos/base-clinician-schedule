@@ -1,12 +1,6 @@
 package br.com.ead.home.actions;
 
-import br.com.ead.home.common.context.InMemoryInitialContext;
-import br.com.ead.home.common.context.InitialContext;
-import br.com.ead.home.common.injectables.Bean;
-import br.com.ead.home.common.namespace.InMemoryNamespaceResolver;
-import br.com.ead.home.common.namespace.NamespaceResolver;
-import br.com.ead.home.configurations.Environment;
-import br.com.ead.home.configurations.SystemEnvironmentVariables;
+import br.com.ead.home.common.factories.ApplicationBeanFactory;
 import br.com.ead.home.controllers.AppointmentController;
 import br.com.ead.home.models.Appointment;
 import br.com.ead.home.models.Slot;
@@ -28,10 +22,6 @@ import java.util.stream.Collectors;
 
 @Log4j2
 public class PostAppointmentsAction implements Handler<RoutingContext> {
-
-    private static InitialContext initialContext = InMemoryInitialContext.getInstance();
-    private static Environment environment = new SystemEnvironmentVariables();
-    private static NamespaceResolver resolver = new InMemoryNamespaceResolver(environment);
 
     @Override
     public void handle(RoutingContext routingContext) {
@@ -82,13 +72,8 @@ public class PostAppointmentsAction implements Handler<RoutingContext> {
     }
 
     private static AppointmentController getAppointmentController() {
-        AppointmentController controller = getBean(AppointmentController.class);
+        AppointmentController controller = ApplicationBeanFactory.getBean(AppointmentController.class);
         log.debug("AppointmentController successfully recovery from initial context");
         return controller;
-    }
-
-    private static <T extends Bean> T getBean(Class<T> clazz) {
-        String jndiName = resolver.namespace(environment.getStage(), environment.getPartition(), clazz.getName());
-        return (T) initialContext.lookup(jndiName);
     }
 }

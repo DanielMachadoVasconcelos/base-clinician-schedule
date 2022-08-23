@@ -1,9 +1,11 @@
 package br.com.ead.home.common.context;
 
+import br.com.ead.home.common.injectables.Bean;
+
 public interface InitialContext {
 
-    void bind(String key, Object value);
+    <T extends Bean> void bind(String key, T value);
 
-    Object lookup(String key);
+    <T extends Bean> T lookup(String key);
 
 }
