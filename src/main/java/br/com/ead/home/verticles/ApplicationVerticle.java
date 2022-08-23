@@ -12,6 +12,8 @@ public class ApplicationVerticle extends AbstractVerticle {
              .compose(parameters -> vertx.deployVerticle(new BeanFactoryVerticle()))
              .compose(parameters -> vertx.deployVerticle(new JacksonMapperVerticle()))
              .compose(parameters -> vertx.deployVerticle(new HttpServerVerticle()))
+             .onSuccess(result -> log.info("Application successfully started"))
+             .onFailure(error -> log.error("Failed to start application", error))
         ;
     }
 }
