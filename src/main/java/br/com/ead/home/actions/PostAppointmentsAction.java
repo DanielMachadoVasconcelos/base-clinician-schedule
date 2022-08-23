@@ -31,7 +31,7 @@ public class PostAppointmentsAction implements Handler<RoutingContext> {
                 .map(request -> new Appointment(request.getClinicianId(), request.getPatientId(), Slot.from(request.getStartAt(), request.getDuration())))
                 .map(appointment -> appointmentController.createAppointment(appointment))
                 .map(AppointmentResponse::from)
-                .doOnError(error -> log.error("There was an error processing the request. It is possible the appointment was not created.", error))
+                .doOnError(error -> log.error("There was an error processing the request. The appointment was not booked.", error))
                 .doOnSuccess(response -> log.info("Appointment successfully booked. Appointment={}", response))
                 .map(Json::encodePrettily)
                 .subscribe(response -> onSuccess(routingContext, response),
@@ -42,14 +42,16 @@ public class PostAppointmentsAction implements Handler<RoutingContext> {
 
         int statusCode = HttpResponseStatus.INTERNAL_SERVER_ERROR.code();
         Buffer body = new JsonObject()
-                .put("title", "Something went wrong! 🤔")
+                .put("title", "The appointment was not booked")
+                .put("message", "There was an unknown error while processing the request")
                 .put("message", error.getMessage())
                 .toBuffer();
 
         if (error instanceof AppointmentException exception){
             statusCode = HttpResponseStatus.BAD_REQUEST.code();
             body = new JsonObject()
-                    .put("title", exception.getMessage())
+                    .put("title", "The appointment was not booked")
+                    .put("message", exception.getMessage())
                     .put("validations", new JsonArray(exception.getErrorCodes().stream()
                                                  .map(code -> new JsonObject()
                                                                 .put("field", code.getField())
